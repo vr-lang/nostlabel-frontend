@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-cream-1: #F8F5F0;
+  --color-bg-cream-2: #F5F2EC;
+  --color-bg-dark-1: #0D0D0D;
+  --color-bg-dark-2: #111111;
+  --color-accent-gold: #C9A46A;
+  --color-text-dark: #121212;
+  --color-text-light: #FFFFFF;
+  
+  --font-display: "Anton", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+/* Base custom styles */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .custom-cursor-enabled * {
+    cursor: none;
+  }
+
+  body {
+    background-color: var(--color-bg-cream-1);
+    color: var(--color-text-dark);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Reset cursor on elements where mouse-following pointer shouldn't break interactions */
+  .custom-cursor-enabled iframe,
+  .custom-cursor-enabled video,
+  .custom-cursor-enabled input,
+  .custom-cursor-enabled textarea,
+  .custom-cursor-enabled select,
+  .custom-cursor-enabled button,
+  .custom-cursor-enabled a,
+  .custom-cursor-enabled [role="button"],
+  .custom-cursor-enabled .hover-trigger {
+    cursor: auto;
+  }
+
+  /* Text selection highlight in luxury accent gold */
+  ::selection {
+    background-color: rgba(201, 164, 106, 0.3);
+    color: var(--color-text-dark);
+  }
+}
+
+/* Lenis smooth scroll standard classes */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overflow: clip;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Luxury Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  background: var(--color-bg-cream-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent-gold);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b89359;
+}
+
+/* Dark theme overrides for custom scrollbar */
+.dark-theme-scrollbar::-webkit-scrollbar {
+  background: var(--color-bg-dark-1);
+}
+
+.dark-theme-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-accent-gold);
+}
+
+/* Grain Overlay Effect */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* SVG Text Outline stroke effect for giant headers */
+.text-outline-stroke {
+  -webkit-text-stroke: 1px rgba(18, 18, 18, 0.15);
+  color: transparent;
+}
+
+.text-outline-stroke-light {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.15);
+  color: transparent;
+}
+
+/* Glassmorphic panels */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glassmorphism-light {
+  background: rgba(248, 245, 240, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(18, 18, 18, 0.05);
+}
+
+/* GPU acceleration helper classes */
+.gpu-accel {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
