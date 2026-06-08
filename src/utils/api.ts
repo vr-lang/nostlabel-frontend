@@ -20,8 +20,7 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const config = {
     ...options,
     headers,
-    // Required to send cookies (refresh tokens, session keys)
-    credentials: 'include' as RequestCredentials,
+    
   };
 
   try {
