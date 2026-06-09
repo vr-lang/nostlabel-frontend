@@ -18,6 +18,7 @@ const AUTH_EXCLUDED_ROUTES = [
 // Create a custom axios instance for auth and general requests
 export const apiClient = axios.create({
   baseURL: API_BASE,
+  
   headers: {
     'Content-Type': 'application/json',
   },
