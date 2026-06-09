@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'https://nostlabel-backend.vercel.app/api';
+const API_BASE = 'https://nostlabel-backend.onrender.com/api';
 
 const AUTH_EXCLUDED_ROUTES = [
   '/auth/login',
@@ -18,7 +18,7 @@ const AUTH_EXCLUDED_ROUTES = [
 // Create a custom axios instance for auth and general requests
 export const apiClient = axios.create({
   baseURL: API_BASE,
-  
+
   headers: {
     'Content-Type': 'application/json',
   },
