@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'https://nostlabel-backend.onrender.com/api';
+const API_BASE = 'https://nostlabel-backend.vercel.app/api';
 
 const AUTH_EXCLUDED_ROUTES = [
   '/auth/login',

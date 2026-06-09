@@ -1,6 +1,6 @@
 import type { Product } from '../data/products';
 
-const API_BASE = 'https://nostlabel-backend.onrender.com/api';
+const API_BASE = 'https://nostlabel-backend.vercel.app/api';
 
 // Simple API response helper
 async function apiFetch(endpoint: string, options: RequestInit = {}) {
