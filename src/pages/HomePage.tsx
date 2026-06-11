@@ -30,7 +30,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onProductClick 
         if (response.ok) {
           const res = await response.json();
           if (res.success && res.data) {
-            setHomepageOffer(res.data);
+            const data = res.data;
+            if (data.products && Array.isArray(data.products)) {
+              data.products = data.products.map((p: any) => ({
+                id: p._id || p.id,
+                name: p.name,
+                slug: p.slug,
+                description: p.description,
+                material: p.brand === 'Nostlable' ? '100% Organic Cotton' : p.brand,
+                gsm: p.description?.includes('GSM') ? p.description.match(/\d+\s*GSM/)?.[0] || '220 GSM' : '220 GSM',
+                price: p.price,
+                discountPrice: p.discountPrice,
+                colors: p.colors || [],
+                sizes: p.sizes || [],
+                images: (p.images || []).map((img: any) => typeof img === 'string' ? img : (img.url || '')),
+                variants: p.variants || [],
+                category: p.category?.name || 'T-Shirts',
+                featured: p.featured || false,
+                bestseller: p.bestseller || false,
+              }));
+            }
+            setHomepageOffer(data);
           }
         }
       } catch (err) {
