@@ -13,7 +13,8 @@ import {
   X,
   RefreshCw,
   Tag,
-  MessageSquare
+  MessageSquare,
+  Percent
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -40,6 +41,7 @@ export const AdminDashboard: React.FC = () => {
     { id: 'customers', label: 'Customers', path: '/admin/customers', icon: <Users size={15} />, enabled: true },
     { id: 'analytics', label: 'Analytics', path: '/admin/analytics', icon: <BarChart3 size={15} />, enabled: true },
     { id: 'coupons', label: 'Coupons', path: '/admin/coupons', icon: <Tag size={15} />, enabled: true },
+    { id: 'offers', label: 'Offers', path: '/admin/offers', icon: <Percent size={15} />, enabled: true },
     { id: 'reviews', label: 'Reviews', path: '/admin/reviews', icon: <MessageSquare size={15} />, enabled: true },
   ];
 

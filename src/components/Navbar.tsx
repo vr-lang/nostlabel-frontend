@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, ShoppingBag, Menu, X, CircleUserRound } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config/api';
 
 interface NavbarProps {
   cartCount: number;
@@ -19,11 +20,33 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [activeOffer, setActiveOffer] = useState<any | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Fetch active TOP_BAR offer on mount
+  useEffect(() => {
+    const fetchActiveOffer = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/offers/active`);
+        if (response.ok) {
+          const res = await response.json();
+          if (res.success && Array.isArray(res.data)) {
+            const topBarOffer = res.data.find((o: any) => o.displayLocation === 'TOP_BAR');
+            if (topBarOffer) {
+              setActiveOffer(topBarOffer);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load top bar offer:', err);
+      }
+    };
+    fetchActiveOffer();
+  }, []);
 
   // Click outside to close user dropdown
   useEffect(() => {
@@ -67,9 +90,22 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header
-        className="fixed top-0 left-0 w-full z-50 transition-all duration-300 gpu-accel bg-[#F5F3EF]/90 backdrop-blur-md py-4 border-b border-text-dark/5"
+        className="fixed top-0 left-0 w-full z-50 transition-all duration-300 gpu-accel bg-[#F5F3EF]/90 backdrop-blur-md border-b border-text-dark/5"
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+        <AnimatePresence>
+          {activeOffer && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
+              className="bg-text-dark text-white text-[9px] md:text-[10px] font-mono uppercase tracking-[0.25em] py-2 md:py-2.5 px-4 text-center overflow-hidden flex items-center justify-center relative border-b border-white/5 select-none"
+            >
+              <span>{activeOffer.title}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between py-4">
           {/* Logo */}
           <button
             onClick={() => {

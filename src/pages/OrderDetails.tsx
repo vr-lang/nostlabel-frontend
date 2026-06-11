@@ -443,6 +443,17 @@ export const OrderDetails: React.FC = () => {
                   <span>SUBTOTAL</span>
                   <span>₹{order.subtotal.toLocaleString()}</span>
                 </div>
+                {order.discountAmount > 0 && (
+                  <div className="flex flex-col space-y-0.5 py-1 text-green-600 border-b border-text-dark/5 mb-1 text-left">
+                    <div className="flex justify-between font-bold">
+                      <span>OFFER DISCOUNT</span>
+                      <span>-₹{order.discountAmount.toLocaleString()}</span>
+                    </div>
+                    <span className="text-[9px] uppercase tracking-wider text-green-600/70 font-bold">
+                      {order.offerName || 'OFFER'} APPLIED
+                    </span>
+                  </div>
+                )}
                 {order.discount > 0 && (
                   <div className="flex justify-between text-green-600 font-bold">
                     <span>COUPON REDUCTION</span>
@@ -454,7 +465,8 @@ export const OrderDetails: React.FC = () => {
                   <span>{order.shippingCharge === 0 ? 'FREE' : `₹${order.shippingCharge}`}</span>
                 </div>
                 {(() => {
-                  const calculatedGstRate = order.subtotal - order.discount > 0 ? Math.round((order.tax / (order.subtotal - order.discount)) * 100) : 12;
+                  const netAmountForGst = order.subtotal - (order.discountAmount || 0) - order.discount;
+                  const calculatedGstRate = netAmountForGst > 0 ? Math.round((order.tax / netAmountForGst) * 100) : 12;
                   return (
                     <div className="flex justify-between text-text-dark/60 border-b border-text-dark/5 pb-2">
                       <span>TAX SUMMARY (GST {calculatedGstRate}%)</span>

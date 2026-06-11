@@ -689,6 +689,17 @@ export const AccountPage: React.FC = () => {
                                         <span>SUBTOTAL</span>
                                         <span>₹{ord.subtotal.toLocaleString()}</span>
                                       </div>
+                                      {ord.discountAmount > 0 && (
+                                        <div className="flex flex-col space-y-0.5 py-1 text-green-600 border-b border-text-dark/5 mb-1 text-left font-mono">
+                                          <div className="flex justify-between font-bold">
+                                            <span>OFFER DISCOUNT</span>
+                                            <span>-₹{ord.discountAmount.toLocaleString()}</span>
+                                          </div>
+                                          <span className="text-[9px] uppercase tracking-wider text-green-600/70 font-bold">
+                                            {ord.offerName || 'OFFER'} APPLIED
+                                          </span>
+                                        </div>
+                                      )}
                                       {ord.discount > 0 && (
                                         <div className="flex justify-between text-green-600 font-bold">
                                           <span>COUPON REDUCTION</span>
@@ -700,7 +711,8 @@ export const AccountPage: React.FC = () => {
                                         <span>{ord.shippingCharge === 0 ? 'FREE' : `₹${ord.shippingCharge}`}</span>
                                       </div>
                                       {(() => {
-                                        const calculatedGstRate = ord.subtotal - ord.discount > 0 ? Math.round((ord.tax / (ord.subtotal - ord.discount)) * 100) : 12;
+                                        const netAmountForGst = ord.subtotal - (ord.discountAmount || 0) - ord.discount;
+                                        const calculatedGstRate = netAmountForGst > 0 ? Math.round((ord.tax / netAmountForGst) * 100) : 12;
                                         return (
                                           <div className="flex justify-between text-text-dark/60 border-b border-text-dark/5 pb-1.5">
                                             <span>TAX (GST {calculatedGstRate}%)</span>

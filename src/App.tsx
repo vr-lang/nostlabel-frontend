@@ -30,6 +30,7 @@ const Customers = lazy(() => import('./pages/admin/Customers'));
 const Analytics = lazy(() => import('./pages/admin/Analytics'));
 const AdminExchanges = lazy(() => import('./pages/admin/AdminExchanges'));
 const Coupons = lazy(() => import('./pages/admin/Coupons'));
+const Offers = lazy(() => import('./pages/admin/Offers'));
 const Reviews = lazy(() => import('./pages/admin/Reviews'));
 
 // Customer Pages (Lazy Loaded)
@@ -528,6 +529,7 @@ export const App: React.FC = () => {
                     <Route path="customers" element={<Customers />} />
                     <Route path="analytics" element={<Analytics />} />
                     <Route path="coupons" element={<Coupons />} />
+                    <Route path="offers" element={<Offers />} />
                     <Route path="reviews" element={<Reviews />} />
                   </Route>
                   </Routes>

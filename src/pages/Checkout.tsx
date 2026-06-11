@@ -18,6 +18,8 @@ import { authService } from '../services/authService';
 import { orderService } from '../services/orderService';
 import { apiClient } from '../services/authService';
 import ConfirmationModal from '../components/common/ConfirmationModal';
+import { getActiveOffers, calculateOfferDiscount } from '../utils/offerHelper';
+import type { Offer } from '../utils/offerHelper';
 
 const NOSTLABEL_PLACEHOLDER = "/logo.png";
 
@@ -203,17 +205,40 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
     }
   };
 
+  const [activeOffers, setActiveOffers] = useState<Offer[]>([]);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      const list = await getActiveOffers();
+      setActiveOffers(list);
+    };
+    fetchOffers();
+  }, []);
+
   // Order Calculations
   const subtotal = cartItems.reduce((acc, item) => {
     const itemPrice = item.product.discountPrice || item.product.price;
     return acc + itemPrice * item.quantity;
   }, 0);
-  
+
+  // Find offer that gives max discount
+  let offerDiscountAmount = 0;
+  let appliedOffer: Offer | null = null;
+
+  for (const offer of activeOffers) {
+    const res = calculateOfferDiscount(cartItems, offer);
+    if (res.discountAmount > offerDiscountAmount) {
+      offerDiscountAmount = res.discountAmount;
+      appliedOffer = res.appliedOffer;
+    }
+  }
+
+  const discountedSubtotalForCoupon = subtotal - offerDiscountAmount;
   const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
-  const shippingCharge = subtotal > 1500 ? 0 : 99;
+  const shippingCharge = discountedSubtotalForCoupon > 1500 ? 0 : 99;
   const gstRate = parseFloat(localStorage.getItem('gstRate') || '12');
-  const tax = Math.round((subtotal - discount) * (gstRate / 100) * 100) / 100;
-  const grandTotal = Math.round((subtotal - discount + shippingCharge + tax) * 100) / 100;
+  const tax = Math.round((discountedSubtotalForCoupon - discount) * (gstRate / 100) * 100) / 100;
+  const grandTotal = Math.round((discountedSubtotalForCoupon - discount + shippingCharge + tax) * 100) / 100;
 
   // Order Placement
   const handlePlaceOrder = async () => {
@@ -665,9 +690,22 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
                   <span>CART SUBTOTAL</span>
                   <span>₹{subtotal.toLocaleString()}</span>
                 </div>
+                {offerDiscountAmount > 0 && (
+                  <div className="flex flex-col space-y-0.5 py-1 font-mono text-green-600 border-b border-text-dark/5 mb-1 text-left">
+                    <div className="flex justify-between font-bold text-[11px]">
+                      <span>OFFER DISCOUNT</span>
+                      <span>-₹{offerDiscountAmount.toLocaleString()}</span>
+                    </div>
+                    <span className="text-[9px] uppercase tracking-wider text-green-600/70 font-bold">
+                      {appliedOffer && (appliedOffer.title.includes('2 T-SHIRTS FOR') || appliedOffer.title.includes('2 FOR ₹1400'))
+                        ? 'NOSTLABEL 2 FOR ₹1400 OFFER APPLIED' 
+                        : `${appliedOffer?.title || 'OFFER'} APPLIED`}
+                    </span>
+                  </div>
+                )}
                 {discount > 0 && (
                   <div className="flex justify-between font-mono text-green-600 font-bold">
-                    <span>LAUNCH PROMO REDUCTION</span>
+                    <span>COUPON REDUCTION</span>
                     <span>-₹{discount.toLocaleString()}</span>
                   </div>
                 )}

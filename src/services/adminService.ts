@@ -140,6 +140,49 @@ export const adminService = {
       console.error('Failed to delete review:', error);
       throw new Error(error.response?.data?.message || 'Failed to delete review');
     }
+  },
+
+  async getOffers() {
+    try {
+      const response = await apiClient.get('/offers');
+      if (response.data && response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (error: any) {
+      console.error('Failed to load offers:', error);
+      throw new Error(error.response?.data?.message || 'Failed to load offers');
+    }
+  },
+
+  async createOffer(data: any) {
+    try {
+      const response = await apiClient.post('/offers', data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to create offer:', error);
+      throw new Error(error.response?.data?.message || 'Failed to create offer');
+    }
+  },
+
+  async updateOffer(id: string, data: any) {
+    try {
+      const response = await apiClient.put(`/offers/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to update offer:', error);
+      throw new Error(error.response?.data?.message || 'Failed to update offer');
+    }
+  },
+
+  async deleteOffer(id: string) {
+    try {
+      const response = await apiClient.delete(`/offers/${id}`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to delete offer:', error);
+      throw new Error(error.response?.data?.message || 'Failed to delete offer');
+    }
   }
 };
 export default adminService;

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import type { Product } from '../data/products';
+import { getActiveOffers, calculateOfferDiscount } from '../utils/offerHelper';
+import type { Offer } from '../utils/offerHelper';
 
 export interface CartItem {
   product: Product;
@@ -30,17 +32,40 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const [discountPercent, setDiscountPercent] = useState(0);
   const [couponError, setCouponError] = useState('');
   const [couponSuccess, setCouponSuccess] = useState('');
+  const [activeOffers, setActiveOffers] = useState<Offer[]>([]);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      const list = await getActiveOffers();
+      setActiveOffers(list);
+    };
+    if (isOpen) {
+      fetchOffers();
+    }
+  }, [isOpen]);
+
+  // Find offer that gives max discount
+  let offerDiscountAmount = 0;
+  let appliedOffer: Offer | null = null;
+
+  for (const offer of activeOffers) {
+    const res = calculateOfferDiscount(cartItems, offer);
+    if (res.discountAmount > offerDiscountAmount) {
+      offerDiscountAmount = res.discountAmount;
+      appliedOffer = res.appliedOffer;
+    }
+  }
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.product.discountPrice || item.product.price) * item.quantity, 0);
+  const discountedSubtotalForCoupon = subtotal - offerDiscountAmount;
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
     setCouponError('');
     setCouponSuccess('');
 
-    // LAUNCH20 is seeded in the backend!
     if (coupon.toUpperCase() === 'LAUNCH20') {
-      if (subtotal >= 999) {
+      if (discountedSubtotalForCoupon >= 999) {
         setDiscountPercent(20);
         setCouponSuccess('COUPON LAUNCH20 APPLIED (20% OFF)');
       } else {
@@ -51,8 +76,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     }
   };
 
-  const discountAmount = (subtotal * discountPercent) / 100;
-  const total = subtotal - discountAmount;
+  const discountAmount = (discountedSubtotalForCoupon * discountPercent) / 100;
+  const total = discountedSubtotalForCoupon - discountAmount;
 
   if (!isOpen) return null;
 
@@ -211,9 +236,24 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <span>SUBTOTAL</span>
                 <span>₹{subtotal.toLocaleString()}</span>
               </div>
+
+              {offerDiscountAmount > 0 && (
+                <div className="flex flex-col space-y-1 py-1 font-mono text-green-600 border-t border-b border-text-dark/5 my-1.5">
+                  <div className="flex justify-between font-bold">
+                    <span>OFFER DISCOUNT</span>
+                    <span>-₹{offerDiscountAmount.toLocaleString()}</span>
+                  </div>
+                  <span className="text-[9px] uppercase tracking-wider text-green-600/70 text-left font-bold">
+                    {appliedOffer && (appliedOffer.title.includes('2 T-SHIRTS FOR') || appliedOffer.title.includes('2 FOR ₹1400'))
+                      ? 'NOSTLABEL 2 FOR ₹1400 OFFER APPLIED' 
+                      : `${appliedOffer?.title || 'OFFER'} APPLIED`}
+                  </span>
+                </div>
+              )}
+
               {discountAmount > 0 && (
                 <div className="flex justify-between font-mono text-green-600">
-                  <span>DISCOUNT (20%)</span>
+                  <span>COUPON DISCOUNT (20%)</span>
                   <span>-₹{discountAmount.toLocaleString()}</span>
                 </div>
               )}

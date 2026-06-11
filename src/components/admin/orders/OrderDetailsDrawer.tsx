@@ -65,6 +65,11 @@ interface Order {
   awbNumber?: string;
   trackingId?: string;
   notes?: string;
+  offerId?: string;
+  offerName?: string;
+  discountAmount?: number;
+  originalTotal?: number;
+  finalTotal?: number;
 }
 
 interface OrderDetailsDrawerProps {
@@ -361,6 +366,17 @@ export const OrderDetailsDrawer: React.FC<OrderDetailsDrawerProps> = ({
                   <span>SUBTOTAL</span>
                   <span>₹{order.subtotal?.toLocaleString() ?? order.totalAmount.toLocaleString()}</span>
                 </div>
+                 {order.discountAmount !== undefined && order.discountAmount > 0 && (
+                  <div className="flex flex-col space-y-0.5 text-green-500 text-[9px] border-b border-white/5 pb-1 w-full text-left font-mono">
+                    <div className="flex justify-between font-bold">
+                      <span>OFFER DISCOUNT</span>
+                      <span>-₹{order.discountAmount.toLocaleString()}</span>
+                    </div>
+                    <span className="uppercase text-green-500/70 font-bold">
+                      {order.offerName || 'OFFER'} APPLIED
+                    </span>
+                  </div>
+                )}
                 {order.discount > 0 && (
                   <div className="flex justify-between text-green-500">
                     <span>COUPON DISCOUNT</span>
@@ -372,7 +388,8 @@ export const OrderDetailsDrawer: React.FC<OrderDetailsDrawerProps> = ({
                   <span>₹{order.shippingCharge ?? '0'}</span>
                 </div>
                 {(() => {
-                  const calculatedGstRate = order.subtotal - order.discount > 0 ? Math.round((order.tax / (order.subtotal - order.discount)) * 100) : 12;
+                  const netAmountForGst = (order.subtotal || order.totalAmount) - (order.discountAmount || 0) - order.discount;
+                  const calculatedGstRate = netAmountForGst > 0 ? Math.round((order.tax / netAmountForGst) * 100) : 12;
                   return (
                     <div className="flex justify-between">
                       <span>TAXES (GST {calculatedGstRate}%)</span>
