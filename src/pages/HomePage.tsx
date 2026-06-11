@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Hero from '../sections/Hero';
 import Manifesto from '../sections/Manifesto';
@@ -10,6 +10,8 @@ import BestSellers from '../sections/BestSellers';
 import WhyNostlabel from '../sections/WhyNostlabel';
 import BrandStory from '../sections/BrandStory';
 import type { Product } from '../data/products';
+import HomepageOfferSection from '../components/HomepageOfferSection';
+import { API_BASE_URL } from '../config/api';
 
 interface HomePageProps {
   onAddToCart: (product: Product, size: 'S' | 'M' | 'L' | 'XL' | 'XXL', color: string) => void;
@@ -18,6 +20,31 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onProductClick }) => {
   const location = useLocation();
+  const [homepageOffer, setHomepageOffer] = useState<any | null>(null);
+
+  // Fetch Homepage Offer Banner Details
+  useEffect(() => {
+    const fetchHomepageOffer = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/homepage-offer`);
+        if (response.ok) {
+          const res = await response.json();
+          if (res.success && res.data) {
+            setHomepageOffer(res.data);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch homepage offer:', err);
+      }
+    };
+    fetchHomepageOffer();
+  }, []);
+
+  const isOfferActive = () => {
+    if (!homepageOffer || !homepageOffer.isActive) return false;
+    const now = new Date();
+    return now >= new Date(homepageOffer.startDate) && now <= new Date(homepageOffer.endDate);
+  };
   
   // Custom scroll reset or scroll to state section on load
   useEffect(() => {
@@ -43,9 +70,19 @@ export const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onProductClick 
     }
   };
 
+  const showOffer = isOfferActive();
+
   return (
     <>
+      {showOffer && (
+        <HomepageOfferSection
+          offer={homepageOffer}
+          isFirstSection={true}
+          onAddToCart={onAddToCart}
+        />
+      )}
       <Hero
+        isFirstSection={!showOffer}
         onShopClick={() => handleNavigateToSection('bestsellers')}
         onExploreClick={() => handleNavigateToSection('manifesto')}
         onAddToCart={onAddToCart}

@@ -183,6 +183,29 @@ export const adminService = {
       console.error('Failed to delete offer:', error);
       throw new Error(error.response?.data?.message || 'Failed to delete offer');
     }
+  },
+
+  async getHomepageOffer() {
+    try {
+      const response = await apiClient.get('/homepage-offer');
+      if (response.data && response.data.success) {
+        return response.data.data;
+      }
+      return null;
+    } catch (error: any) {
+      console.error('Failed to load homepage offer settings:', error);
+      throw new Error(error.response?.data?.message || 'Failed to load homepage offer settings');
+    }
+  },
+
+  async updateHomepageOffer(data: any) {
+    try {
+      const response = await apiClient.put('/homepage-offer', data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to update homepage offer settings:', error);
+      throw new Error(error.response?.data?.message || 'Failed to update homepage offer settings');
+    }
   }
 };
 export default adminService;

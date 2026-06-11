@@ -43,6 +43,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
   const [error, setError] = useState<string | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   
   // Coupon State
   const [couponCodeInput, setCouponCodeInput] = useState('');
@@ -189,21 +190,52 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
   };
 
   // Coupon Application
-  const handleApplyCoupon = async () => {
-    if (!couponCodeInput.trim()) return;
+  const handleApplyCoupon = async (codeOverride?: string) => {
+    const code = codeOverride || couponCodeInput;
+    if (!code.trim()) return;
+
+    if (appliedCoupon && appliedCoupon.code.toUpperCase() === code.toUpperCase() && !codeOverride) {
+      setCouponSuccess(`COUPON "${code.toUpperCase()}" IS ALREADY APPLIED`);
+      return;
+    }
+
+    setCouponLoading(true);
     setCouponError(null);
     setCouponSuccess(null);
     try {
-      const response = await apiClient.post('/coupons/apply', { code: couponCodeInput });
+      const response = await apiClient.post('/coupons/apply', { code });
       if (response.data && response.data.success) {
         setAppliedCoupon(response.data.data);
-        setCouponSuccess(`COUPON "${couponCodeInput.toUpperCase()}" APPLIED SUCCESSFULLY`);
+        setCouponSuccess(`COUPON "${code.toUpperCase()}" APPLIED SUCCESSFULLY`);
+        sessionStorage.setItem('appliedCouponCode', response.data.data.code);
+        if (codeOverride) {
+          setCouponCodeInput(response.data.data.code);
+        }
       }
     } catch (err: any) {
       setCouponError(err.response?.data?.message || 'Invalid or expired coupon code.');
       setAppliedCoupon(null);
+      sessionStorage.removeItem('appliedCouponCode');
+    } finally {
+      setCouponLoading(false);
     }
   };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCodeInput('');
+    setCouponSuccess(null);
+    setCouponError(null);
+    sessionStorage.removeItem('appliedCouponCode');
+  };
+
+  // Restore coupon state from sessionStorage on mount
+  useEffect(() => {
+    const savedCoupon = sessionStorage.getItem('appliedCouponCode');
+    if (savedCoupon && cartItems.length > 0) {
+      handleApplyCoupon(savedCoupon);
+    }
+  }, [cartItems.length]);
 
   const [activeOffers, setActiveOffers] = useState<Offer[]>([]);
 
@@ -265,6 +297,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
           await apiClient.post('/cart/clear');
         } catch {}
         clearCartLocal();
+        sessionStorage.removeItem('appliedCouponCode');
         setPlacedOrder(result.order);
         setShowSuccessModal(true);
       }
@@ -658,9 +691,9 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
                   })}
                 </div>
 
-                {/* Coupon Code Input */}
-                <div className="pt-4 border-t border-text-dark/5 space-y-2">
-                  <span className="text-[8px] font-mono tracking-widest text-text-dark/40 font-bold uppercase block">PROMOTIONAL DISCREPANCY CODE</span>
+                {/* Coupon Code Section */}
+                <div className="pt-4 border-t border-text-dark/5 space-y-3">
+                  <span className="text-[8px] font-mono tracking-widest text-text-dark/40 font-bold uppercase block">Coupon Code</span>
                   <div className="flex space-x-2">
                     <div className="flex-1 flex items-center border border-text-dark/15 p-1 rounded-sm bg-white/50 focus-within:border-accent-gold transition-colors">
                       <Tag size={12} className="text-text-dark/30 ml-2 mr-1" />
@@ -669,15 +702,27 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
                         placeholder="ENTER COUPON" 
                         value={couponCodeInput}
                         onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
-                        className="w-full bg-transparent text-xs tracking-widest text-text-dark focus:outline-none uppercase font-mono py-1 px-1"
+                        disabled={appliedCoupon !== null}
+                        className="w-full bg-transparent text-xs tracking-widest text-text-dark focus:outline-none uppercase font-mono py-1 px-1 disabled:opacity-60"
                       />
                     </div>
-                    <button 
-                      onClick={handleApplyCoupon}
-                      className="bg-text-dark text-white border border-text-dark hover:bg-transparent hover:text-text-dark px-4 text-[9px] font-mono uppercase font-bold tracking-widest transition-colors cursor-pointer"
-                    >
-                      APPLY
-                    </button>
+                    {appliedCoupon ? (
+                      <button 
+                        onClick={handleRemoveCoupon}
+                        className="bg-red-600 text-white border border-red-600 hover:bg-transparent hover:text-red-600 px-4 text-[9px] font-mono uppercase font-bold tracking-widest transition-colors cursor-pointer"
+                      >
+                        REMOVE
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleApplyCoupon()}
+                        disabled={couponLoading || !couponCodeInput.trim()}
+                        className="bg-text-dark text-white border border-text-dark hover:bg-transparent hover:text-text-dark px-4 text-[9px] font-mono uppercase font-bold tracking-widest transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-1.5"
+                      >
+                        {couponLoading && <Loader2 size={10} className="animate-spin" />}
+                        <span>APPLY COUPON</span>
+                      </button>
+                    )}
                   </div>
                   {couponError && <p className="text-[9px] font-mono text-red-500 uppercase">{couponError}</p>}
                   {couponSuccess && <p className="text-[9px] font-mono text-green-600 uppercase">{couponSuccess}</p>}
@@ -685,15 +730,23 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
               </div>
 
               {/* Financial values summary */}
-              <div className="space-y-2 pt-6 border-t border-text-dark/10 mt-4 text-xs">
+              <div className="space-y-2.5 pt-6 border-t border-text-dark/10 mt-4 text-xs">
                 <div className="flex justify-between font-mono text-text-dark/60">
-                  <span>CART SUBTOTAL</span>
+                  <span>Subtotal</span>
                   <span>₹{subtotal.toLocaleString()}</span>
                 </div>
+                
+                {discount > 0 && (
+                  <div className="flex justify-between font-mono text-green-600 font-bold">
+                    <span>Coupon Discount</span>
+                    <span>-₹{discount.toLocaleString()}</span>
+                  </div>
+                )}
+
                 {offerDiscountAmount > 0 && (
                   <div className="flex flex-col space-y-0.5 py-1 font-mono text-green-600 border-b border-text-dark/5 mb-1 text-left">
-                    <div className="flex justify-between font-bold text-[11px]">
-                      <span>OFFER DISCOUNT</span>
+                    <div className="flex justify-between font-bold">
+                      <span>Offer Discount</span>
                       <span>-₹{offerDiscountAmount.toLocaleString()}</span>
                     </div>
                     <span className="text-[9px] uppercase tracking-wider text-green-600/70 font-bold">
@@ -703,22 +756,19 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
                     </span>
                   </div>
                 )}
-                {discount > 0 && (
-                  <div className="flex justify-between font-mono text-green-600 font-bold">
-                    <span>COUPON REDUCTION</span>
-                    <span>-₹{discount.toLocaleString()}</span>
-                  </div>
-                )}
+
                 <div className="flex justify-between font-mono text-text-dark/60">
-                  <span>LOGISTICS SPEC FEE</span>
-                  <span>{shippingCharge === 0 ? 'FREE' : `₹${shippingCharge}`}</span>
-                </div>
-                <div className="flex justify-between font-mono text-text-dark/60 border-b border-text-dark/5 pb-2">
-                  <span>TAX SUMMARY (GST {gstRate}%)</span>
+                  <span>GST</span>
                   <span>₹{tax.toLocaleString()}</span>
                 </div>
+
+                <div className="flex justify-between font-mono text-text-dark/60 border-b border-text-dark/5 pb-2">
+                  <span>Shipping</span>
+                  <span>{shippingCharge === 0 ? 'FREE' : `₹${shippingCharge}`}</span>
+                </div>
+
                 <div className="flex justify-between font-mono text-text-dark font-bold text-sm pt-2">
-                  <span>TOTAL ESTIMATED ACQUISITION</span>
+                  <span>Final Total</span>
                   <span className="text-base text-accent-gold">₹{grandTotal.toLocaleString()}</span>
                 </div>
               </div>

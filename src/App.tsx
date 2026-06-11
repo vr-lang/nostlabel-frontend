@@ -31,6 +31,7 @@ const Analytics = lazy(() => import('./pages/admin/Analytics'));
 const AdminExchanges = lazy(() => import('./pages/admin/AdminExchanges'));
 const Coupons = lazy(() => import('./pages/admin/Coupons'));
 const Offers = lazy(() => import('./pages/admin/Offers'));
+const HomepageOfferAdmin = lazy(() => import('./pages/admin/HomepageOffer'));
 const Reviews = lazy(() => import('./pages/admin/Reviews'));
 
 // Customer Pages (Lazy Loaded)
@@ -97,6 +98,31 @@ export const App: React.FC = () => {
 
   // Determine if header and footer should render (show on all customer-facing routes)
   const showNavbarAndFooter = !location.pathname.startsWith('/admin') && location.pathname !== '/director-login';
+
+  // Dynamic header height measurement to compensate for fixed position spacing
+  useEffect(() => {
+    if (!showNavbarAndFooter) return;
+    
+    // Set a timeout to allow the header to render in the DOM first
+    const timer = setTimeout(() => {
+      const header = document.querySelector('header');
+      if (!header) return;
+
+      const observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          document.documentElement.style.setProperty(
+            '--header-height',
+            `${entry.target.getBoundingClientRect().height}px`
+          );
+        }
+      });
+
+      observer.observe(header);
+      return () => observer.disconnect();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname, showNavbarAndFooter]);
 
   // 1. Fetch Cart from Backend on Startup
   useEffect(() => {
@@ -530,6 +556,7 @@ export const App: React.FC = () => {
                     <Route path="analytics" element={<Analytics />} />
                     <Route path="coupons" element={<Coupons />} />
                     <Route path="offers" element={<Offers />} />
+                    <Route path="homepage-offer" element={<HomepageOfferAdmin />} />
                     <Route path="reviews" element={<Reviews />} />
                   </Route>
                   </Routes>

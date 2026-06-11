@@ -42,6 +42,7 @@ export const AdminDashboard: React.FC = () => {
     { id: 'analytics', label: 'Analytics', path: '/admin/analytics', icon: <BarChart3 size={15} />, enabled: true },
     { id: 'coupons', label: 'Coupons', path: '/admin/coupons', icon: <Tag size={15} />, enabled: true },
     { id: 'offers', label: 'Offers', path: '/admin/offers', icon: <Percent size={15} />, enabled: true },
+    { id: 'homepage-offer', label: 'Homepage Offer', path: '/admin/homepage-offer', icon: <Sparkles size={15} />, enabled: true },
     { id: 'reviews', label: 'Reviews', path: '/admin/reviews', icon: <MessageSquare size={15} />, enabled: true },
   ];
 

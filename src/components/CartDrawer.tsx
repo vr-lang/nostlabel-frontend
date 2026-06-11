@@ -17,7 +17,7 @@ interface CartDrawerProps {
   cartItems: CartItem[];
   onUpdateQuantity: (productId: string, quantity: number, size: string, color: string) => void;
   onRemoveItem: (productId: string, size: string, color: string) => void;
-  onCheckout: (couponCode?: string) => void;
+  onCheckout: () => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -28,10 +28,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onRemoveItem,
   onCheckout,
 }) => {
-  const [coupon, setCoupon] = useState('');
-  const [discountPercent, setDiscountPercent] = useState(0);
-  const [couponError, setCouponError] = useState('');
-  const [couponSuccess, setCouponSuccess] = useState('');
   const [activeOffers, setActiveOffers] = useState<Offer[]>([]);
 
   useEffect(() => {
@@ -57,27 +53,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   }
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.product.discountPrice || item.product.price) * item.quantity, 0);
-  const discountedSubtotalForCoupon = subtotal - offerDiscountAmount;
-
-  const handleApplyCoupon = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCouponError('');
-    setCouponSuccess('');
-
-    if (coupon.toUpperCase() === 'LAUNCH20') {
-      if (discountedSubtotalForCoupon >= 999) {
-        setDiscountPercent(20);
-        setCouponSuccess('COUPON LAUNCH20 APPLIED (20% OFF)');
-      } else {
-        setCouponError('MINIMUM ORDER VALUE IS ₹999');
-      }
-    } else {
-      setCouponError('INVALID COUPON CODE');
-    }
-  };
-
-  const discountAmount = (discountedSubtotalForCoupon * discountPercent) / 100;
-  const total = discountedSubtotalForCoupon - discountAmount;
+  const total = subtotal - offerDiscountAmount;
 
   if (!isOpen) return null;
 
@@ -206,30 +182,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           )}
         </div>
 
-        {/* Pricing Summary & Coupon Footer */}
+        {/* Pricing Summary Footer */}
         {cartItems.length > 0 && (
           <div className="p-6 bg-bg-cream-1 border-t border-text-dark/10 space-y-6">
             
-            {/* Coupon Promo Field */}
-            <form onSubmit={handleApplyCoupon} className="flex space-x-2">
-              <input
-                type="text"
-                placeholder="PROMO CODE"
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
-                className="flex-grow bg-transparent border-b border-text-dark/15 text-[10px] tracking-widest py-2 px-1 text-text-dark placeholder:text-text-dark/30 focus:outline-none focus:border-accent-gold uppercase font-mono"
-              />
-              <button
-                type="submit"
-                className="text-[9px] uppercase font-bold tracking-widest px-4 py-2 border border-text-dark/20 text-text-dark hover:bg-text-dark hover:text-white transition-colors"
-              >
-                APPLY
-              </button>
-            </form>
-
-            {couponError && <p className="text-[9px] text-red-500 font-mono uppercase text-left">{couponError}</p>}
-            {couponSuccess && <p className="text-[9px] text-green-600 font-mono uppercase text-left">{couponSuccess}</p>}
-
             {/* Calculations */}
             <div className="space-y-2.5 pt-2 border-t border-text-dark/5 text-xs">
               <div className="flex justify-between font-mono text-text-dark/50">
@@ -251,12 +207,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 </div>
               )}
 
-              {discountAmount > 0 && (
-                <div className="flex justify-between font-mono text-green-600">
-                  <span>COUPON DISCOUNT (20%)</span>
-                  <span>-₹{discountAmount.toLocaleString()}</span>
-                </div>
-              )}
               <div className="flex justify-between font-mono text-text-dark/40">
                 <span>SHIPPING</span>
                 <span>FREE</span>
@@ -269,7 +219,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
             {/* Action button */}
             <button
-              onClick={() => onCheckout(discountPercent > 0 ? 'LAUNCH20' : undefined)}
+              onClick={() => onCheckout()}
               className="w-full bg-text-dark text-white text-xs uppercase font-bold tracking-[0.25em] py-4 flex items-center justify-center space-x-2 border border-text-dark hover:bg-transparent hover:text-text-dark transition-all duration-300 hover-trigger"
             >
               <span>PROCEED TO CHECKOUT</span>

@@ -11,6 +11,7 @@ interface HeroProps {
   onShopClick: () => void;
   onExploreClick: () => void;
   onAddToCart: (product: Product, size: 'S' | 'M' | 'L' | 'XL' | 'XXL', color: string) => void;
+  isFirstSection?: boolean;
 }
 
 const HeroSkeleton: React.FC = () => (
@@ -49,7 +50,7 @@ const HeroSkeleton: React.FC = () => (
   </div>
 );
 
-export const Hero: React.FC<HeroProps> = ({ onShopClick, onExploreClick, onAddToCart }) => {
+export const Hero: React.FC<HeroProps> = ({ onShopClick, onExploreClick, onAddToCart, isFirstSection = true }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -139,8 +140,11 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick, onExploreClick, onAddTo
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1.0, ease: 'easeOut' as const }}
-      className="relative w-full flex flex-col justify-between overflow-hidden transition-colors duration-[1000ms] ease-out pt-20 pb-8 px-4 h-auto min-h-auto md:h-[85vh] md:min-h-[70vh] md:pt-24 md:pb-10 md:px-8 lg:min-h-screen lg:pt-28 lg:pb-12 lg:px-12 z-10"
-      style={{ backgroundColor: bgColors[activeIndex % bgColors.length] }}
+      className="relative w-full flex flex-col justify-between overflow-hidden transition-colors duration-[1000ms] ease-out pb-8 px-4 h-auto min-h-auto md:h-[85vh] md:min-h-[70vh] md:pb-10 md:px-8 lg:min-h-screen lg:pb-12 lg:px-12 z-10"
+      style={{ 
+        backgroundColor: bgColors[activeIndex % bgColors.length],
+        paddingTop: isFirstSection ? 'var(--header-height, 80px)' : '4rem'
+      }}
       id="hero"
     >
       {/* Subtle Dust/Particles Canvas Background */}
