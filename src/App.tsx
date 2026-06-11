@@ -3,8 +3,8 @@ import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-
 import { AnimatePresence } from 'framer-motion';
 import { LenisProvider } from './components/LenisProvider';
 import Navbar from './components/Navbar';
-import Preloader from './components/Preloader';
 import PageLoader from './components/PageLoader';
+import { useStartupLoading } from './context/StartupLoadingContext';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import GrainOverlay from './components/GrainOverlay';
@@ -80,7 +80,9 @@ const CustomerProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ child
 };
 
 export const App: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+  const { isAppLoading, error: startupError } = useStartupLoading();
+  const showInitialLoader = isAppLoading || !!startupError;
+
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -126,7 +128,7 @@ export const App: React.FC = () => {
         console.warn("Backend offline or client unauthorized. Operating cart in standalone mode.");
       }
     };
-    if (!loading) {
+    if (!showInitialLoader) {
       const token = localStorage.getItem('nostlabel_admin_token');
       if (token) {
         syncCart();
@@ -134,20 +136,20 @@ export const App: React.FC = () => {
         setCartItems([]);
       }
     }
-  }, [loading, location.pathname]);
+  }, [showInitialLoader, location.pathname]);
 
   // 1b. Refresh GSAP ScrollTrigger on navigation to ensure correct offsets
   useEffect(() => {
-    if (loading) return;
+    if (showInitialLoader) return;
     const timer = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 500);
     return () => clearTimeout(timer);
-  }, [location.pathname, loading]);
+  }, [location.pathname, showInitialLoader]);
 
   // 1c. Trigger full-screen loader on route changes
   useEffect(() => {
-    if (loading) return;
+    if (showInitialLoader) return;
 
     if (location.pathname !== prevPathRef.current) {
       prevPathRef.current = location.pathname;
@@ -157,7 +159,7 @@ export const App: React.FC = () => {
       }, 650); // Luxury fade overlay timing
       return () => clearTimeout(timer);
     }
-  }, [location.pathname, loading]);
+  }, [location.pathname, showInitialLoader]);
 
 
 
@@ -257,10 +259,10 @@ export const App: React.FC = () => {
     <AuthProvider>
       <LenisProvider>
         <ScrollToTop />
-          {/* Cinematic preloader */}
-          {loading && <Preloader onComplete={() => setLoading(false)} />}
+          {/* Startup loader (backend-aware) */}
+          {showInitialLoader && <PageLoader />}
 
-          {!loading && (
+          {!showInitialLoader && (
             <div className="relative min-h-screen selection:bg-accent-gold/30 selection:text-text-dark">
               {/* Global Visual Overlays */}
               <GrainOverlay />
