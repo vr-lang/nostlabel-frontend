@@ -87,9 +87,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <h3 className="font-display text-2xl md:text-3.5xl uppercase text-text-dark leading-none">
                 {product.name}
               </h3>
-              <p className="text-sm font-mono text-accent-gold font-bold pt-1">
-                ₹{product.price.toLocaleString()}
-              </p>
+              <div className="flex items-center space-x-2 font-mono text-sm pt-1">
+                {product.discountPrice ? (
+                  <>
+                    <span className="text-accent-gold font-bold">
+                      ₹{product.discountPrice.toLocaleString()}
+                    </span>
+                    <span className="text-text-dark/40 line-through text-xs font-semibold">
+                      ₹{product.price.toLocaleString()}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-accent-gold font-bold">
+                    ₹{product.price.toLocaleString()}
+                  </span>
+                )}
+              </div>
             </div>
 
             <p className="text-xs md:text-sm text-text-dark/80 font-light leading-relaxed">

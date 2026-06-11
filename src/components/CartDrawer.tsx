@@ -31,7 +31,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const [couponError, setCouponError] = useState('');
   const [couponSuccess, setCouponSuccess] = useState('');
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const subtotal = cartItems.reduce((acc, item) => acc + (item.product.discountPrice || item.product.price) * item.quantity, 0);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,9 +161,20 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                 {/* Pricing */}
                 <div className="text-right flex flex-col justify-between h-full">
-                  <span className="text-xs font-mono font-semibold text-text-dark">
-                    ₹{(item.product.price * item.quantity).toLocaleString()}
-                  </span>
+                  {item.product.discountPrice ? (
+                    <div className="flex flex-col items-end">
+                      <span className="text-xs font-mono font-semibold text-accent-gold">
+                        ₹{(item.product.discountPrice * item.quantity).toLocaleString()}
+                      </span>
+                      <span className="text-[10px] font-mono text-text-dark/40 line-through">
+                        ₹{(item.product.price * item.quantity).toLocaleString()}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-xs font-mono font-semibold text-text-dark">
+                      ₹{(item.product.price * item.quantity).toLocaleString()}
+                    </span>
+                  )}
                 </div>
               </div>
             ))

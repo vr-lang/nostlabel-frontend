@@ -453,10 +453,15 @@ export const OrderDetails: React.FC = () => {
                   <span>LOGISTICS SPEC FEE</span>
                   <span>{order.shippingCharge === 0 ? 'FREE' : `₹${order.shippingCharge}`}</span>
                 </div>
-                <div className="flex justify-between text-text-dark/60 border-b border-text-dark/5 pb-2">
-                  <span>TAX SUMMARY (GST 12%)</span>
-                  <span>₹{order.tax.toLocaleString()}</span>
-                </div>
+                {(() => {
+                  const calculatedGstRate = order.subtotal - order.discount > 0 ? Math.round((order.tax / (order.subtotal - order.discount)) * 100) : 12;
+                  return (
+                    <div className="flex justify-between text-text-dark/60 border-b border-text-dark/5 pb-2">
+                      <span>TAX SUMMARY (GST {calculatedGstRate}%)</span>
+                      <span>₹{order.tax.toLocaleString()}</span>
+                    </div>
+                  );
+                })()}
                 <div className="flex justify-between text-text-dark font-bold text-sm pt-2">
                   <span>FINAL VALUE PAID</span>
                   <span className="text-accent-gold font-bold">₹{order.totalAmount.toLocaleString()}</span>

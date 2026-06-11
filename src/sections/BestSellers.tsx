@@ -134,9 +134,22 @@ export const BestSellers: React.FC<BestSellersProps> = ({ onProductClick }) => {
                       <span className="text-[9px] font-mono tracking-widest text-text-dark/40 uppercase">
                         {product.category}
                       </span>
-                      <span className="text-[10px] font-mono text-accent-gold font-semibold">
-                        ₹{product.price.toLocaleString()}
-                      </span>
+                      <div className="flex items-center space-x-1.5 font-mono text-[10px]">
+                        {product.discountPrice ? (
+                          <>
+                            <span className="text-accent-gold font-semibold">
+                              ₹{product.discountPrice.toLocaleString()}
+                            </span>
+                            <span className="text-text-dark/40 line-through text-[9px]">
+                              ₹{product.price.toLocaleString()}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-accent-gold font-semibold">
+                            ₹{product.price.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <h3 className="font-display text-lg md:text-xl uppercase text-text-dark leading-tight group-hover:text-accent-gold transition-colors duration-300">
                       {product.name}

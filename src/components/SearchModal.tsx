@@ -156,9 +156,22 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onPro
                     <h4 className="font-display text-base uppercase text-white leading-tight group-hover:text-accent-gold transition-colors">
                       {product.name}
                     </h4>
-                    <span className="text-[10px] font-mono text-white/50 block">
-                      ₹{product.price.toLocaleString()}
-                    </span>
+                    <div className="flex items-center space-x-1.5 font-mono text-[10px] text-white/50">
+                      {product.discountPrice ? (
+                        <>
+                          <span className="text-white font-semibold">
+                            ₹{product.discountPrice.toLocaleString()}
+                          </span>
+                          <span className="text-white/30 line-through text-[9px]">
+                            ₹{product.price.toLocaleString()}
+                          </span>
+                        </>
+                      ) : (
+                        <span>
+                          ₹{product.price.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

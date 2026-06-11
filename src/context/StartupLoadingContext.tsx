@@ -31,7 +31,9 @@ export const StartupLoadingProvider: React.FC<{ children: React.ReactNode }> = (
     try {
       // 1. Handshake with lightweight health check first to wake up Render backend
       setStatusMessage('ESTABLISHING SECURE HANDSHAKE...');
-      await apiClient.get('/health');
+      const healthRes = await apiClient.get('/health');
+      const gstRate = healthRes.data && healthRes.data.gstRate !== undefined ? healthRes.data.gstRate : 12;
+      localStorage.setItem('gstRate', gstRate.toString());
       
       // 2. Load critical startup datasets in parallel (products & categories)
       setStatusMessage('DOWNLOADING COLLECTION BLUEPRINT...');

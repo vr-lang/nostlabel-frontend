@@ -211,7 +211,8 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
   
   const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const shippingCharge = subtotal > 1500 ? 0 : 99;
-  const tax = Math.round((subtotal - discount) * 0.12 * 100) / 100; // 12% GST
+  const gstRate = parseFloat(localStorage.getItem('gstRate') || '12');
+  const tax = Math.round((subtotal - discount) * (gstRate / 100) * 100) / 100;
   const grandTotal = Math.round((subtotal - discount + shippingCharge + tax) * 100) / 100;
 
   // Order Placement
@@ -675,7 +676,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
                   <span>{shippingCharge === 0 ? 'FREE' : `₹${shippingCharge}`}</span>
                 </div>
                 <div className="flex justify-between font-mono text-text-dark/60 border-b border-text-dark/5 pb-2">
-                  <span>TAX SUMMARY (GST 12%)</span>
+                  <span>TAX SUMMARY (GST {gstRate}%)</span>
                   <span>₹{tax.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between font-mono text-text-dark font-bold text-sm pt-2">

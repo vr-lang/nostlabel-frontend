@@ -33,9 +33,10 @@ export const TrackOrder: React.FC = () => {
       try {
         const data = await orderService.getOrderById(orderId);
         
-        // Verify customer ownership of the order
-        // Note: admin is also allowed to view if needed, but normally customer is logged in.
-        if (data.customer && user && data.customer._id !== user.id && user.role !== 'ADMIN') {
+        const customerId = data.customer?._id || data.customer;
+        const currentUserId = user?.id || (user as any)?._id;
+        
+        if (customerId && currentUserId && customerId.toString() !== currentUserId.toString() && user?.role !== 'ADMIN') {
           throw new Error('ACCESS TO SPECIFIED RECORD DENIED: AUTHORIZATION FAILURE');
         }
         

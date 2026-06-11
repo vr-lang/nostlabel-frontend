@@ -103,7 +103,14 @@ export const FeaturedCollection: React.FC<FeaturedCollectionProps> = ({ onCatego
       description: product.description.length > 130 
         ? `${product.description.slice(0, 130)}...` 
         : product.description,
-      count: `₹${product.price.toLocaleString()}`,
+      count: product.discountPrice ? (
+        <span className="flex items-center space-x-1.5">
+          <span className="text-accent-gold">₹{product.discountPrice.toLocaleString()}</span>
+          <span className="line-through text-white/30 text-[9px]">₹{product.price.toLocaleString()}</span>
+        </span>
+      ) : (
+        `₹${product.price.toLocaleString()}`
+      ),
       categoryLink: product.category
     };
   });

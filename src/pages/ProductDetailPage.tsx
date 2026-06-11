@@ -101,6 +101,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
   const [quantity, setQuantity] = useState(1);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [mobileImageIdx, setMobileImageIdx] = useState(0);
+  const mobileScrollRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (mobileScrollRef.current) {
+      const container = mobileScrollRef.current;
+      const targetLeft = mobileImageIdx * container.clientWidth;
+      if (Math.abs(container.scrollLeft - targetLeft) > 5) {
+        container.scrollTo({ left: targetLeft, behavior: 'smooth' });
+      }
+    }
+  }, [mobileImageIdx]);
 
   // Reviews state
   const { user } = useAuth();
@@ -524,30 +535,27 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
           {/* Mobile Layout (Swipeable Carousel) */}
           <div className="md:hidden relative w-full">
             <div className="relative aspect-[3/4] w-full overflow-hidden bg-bg-cream-2 border border-black/5 rounded-sm">
-              <motion.div
-                className="flex h-full cursor-grab active:cursor-grabbing"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                onDragEnd={(_, info) => {
-                  const swipeThreshold = 50;
-                  if (info.offset.x < -swipeThreshold && mobileImageIdx < product.images.length - 1) {
-                    setMobileImageIdx(prev => prev + 1);
-                  } else if (info.offset.x > swipeThreshold && mobileImageIdx > 0) {
-                    setMobileImageIdx(prev => prev - 1);
+              <div
+                ref={mobileScrollRef}
+                className="flex h-full overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth touch-pan-x"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+                onScroll={(e) => {
+                  const target = e.currentTarget;
+                  const index = Math.round(target.scrollLeft / target.clientWidth);
+                  if (index !== mobileImageIdx && index >= 0 && index < product.images.length) {
+                    setMobileImageIdx(index);
                   }
                 }}
-                animate={{ x: `-${mobileImageIdx * 100}%` }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 {product.images.map((img, idx) => (
-                  <div key={idx} className="min-w-full h-full">
+                  <div key={idx} className="min-w-full h-full snap-start snap-always translate-z-0 backface-hidden will-change-transform">
                     <FadeInImage
                       src={img}
                       alt={`${product.name} - slide ${idx + 1}`}
                     />
                   </div>
                 ))}
-              </motion.div>
+              </div>
               
               {/* Swipe Indicators */}
               {product.images.length > 1 && (
@@ -589,9 +597,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
               {product.name}
             </h1>
             
-            <p className="text-lg font-mono text-text-dark/90 font-bold">
-              ₹{product.price.toLocaleString()}
-            </p>
+            <div className="flex items-center space-x-3 font-mono text-lg text-text-dark/90 font-bold">
+              {product.discountPrice ? (
+                <>
+                  <span className="text-text-dark/90">
+                    ₹{product.discountPrice.toLocaleString()}
+                  </span>
+                  <span className="text-text-dark/40 line-through text-sm font-semibold">
+                    ₹{product.price.toLocaleString()}
+                  </span>
+                </>
+              ) : (
+                <span>
+                  ₹{product.price.toLocaleString()}
+                </span>
+              )}
+            </div>
           </div>
 
           <hr className="border-text-dark/5" />
@@ -745,11 +766,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             </p>
           </div>
           
-          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 border border-text-dark/10 p-8 bg-bg-cream-2 rounded-sm shadow-inner">
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 border border-text-dark/10 p-6 sm:p-8 bg-bg-cream-2 rounded-sm shadow-inner">
             {productSpecs.map((spec) => (
-              <div key={spec.name} className="flex justify-between py-2.5 border-b border-text-dark/5 text-xs font-mono">
-                <span className="text-text-dark/40 uppercase tracking-wider">{spec.name}</span>
-                <span className="text-text-dark font-bold uppercase tracking-wide">{spec.value}</span>
+              <div key={spec.name} className="flex flex-col sm:flex-row sm:justify-between sm:items-start py-3.5 sm:py-4 border-b border-text-dark/5 text-xs font-mono gap-1.5 sm:gap-4">
+                <span className="text-text-dark/40 uppercase tracking-wider shrink-0">{spec.name}</span>
+                <span className="text-text-dark font-bold uppercase tracking-wide text-left sm:text-right break-words">{spec.value}</span>
               </div>
             ))}
           </div>
@@ -1009,9 +1030,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
                   <h3 className="text-text-dark font-bold uppercase group-hover:text-accent-gold transition-colors duration-300 truncate">
                     {p.name}
                   </h3>
-                  <p className="text-text-dark/50">
-                    ₹{p.price.toLocaleString()}
-                  </p>
+                  <div className="flex items-center space-x-1.5 text-text-dark/50 font-semibold font-mono text-[10px] md:text-xs">
+                    {p.discountPrice ? (
+                      <>
+                        <span className="text-text-dark/80">
+                          ₹{p.discountPrice.toLocaleString()}
+                        </span>
+                        <span className="line-through text-text-dark/30 text-[9px] md:text-[10px]">
+                          ₹{p.price.toLocaleString()}
+                        </span>
+                      </>
+                    ) : (
+                      <span>
+                        ₹{p.price.toLocaleString()}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

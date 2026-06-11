@@ -371,10 +371,15 @@ export const OrderDetailsDrawer: React.FC<OrderDetailsDrawerProps> = ({
                   <span>LOGISTICS CHARGE</span>
                   <span>₹{order.shippingCharge ?? '0'}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>TAXES (GST 12%)</span>
-                  <span>₹{order.tax ?? '0'}</span>
-                </div>
+                {(() => {
+                  const calculatedGstRate = order.subtotal - order.discount > 0 ? Math.round((order.tax / (order.subtotal - order.discount)) * 100) : 12;
+                  return (
+                    <div className="flex justify-between">
+                      <span>TAXES (GST {calculatedGstRate}%)</span>
+                      <span>₹{order.tax ?? '0'}</span>
+                    </div>
+                  );
+                })()}
                 <div className="flex justify-between text-accent-gold font-bold text-[11px] pt-1.5 border-t border-white/5">
                   <span>GROSS VALUE</span>
                   <span>₹{order.totalAmount.toLocaleString()}</span>
