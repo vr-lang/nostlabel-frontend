@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { LenisProvider } from './components/LenisProvider';
 import Navbar from './components/Navbar';
 import Preloader from './components/Preloader';
+import PageLoader from './components/PageLoader';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import GrainOverlay from './components/GrainOverlay';
@@ -14,39 +15,39 @@ import Footer from './sections/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
 import PageTransition from './components/layout/PageTransition';
 
-// Pages
-import HomePage from './pages/HomePage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import CollectionsPage from './pages/CollectionsPage';
-import CollectionDetailPage from './pages/CollectionDetailPage';
-import AboutPage from './pages/AboutPage';
-import DirectorLogin from './pages/DirectorLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import Overview from './pages/admin/Overview';
-import Orders from './pages/admin/Orders';
-import Inventory from './pages/admin/Inventory';
-import Customers from './pages/admin/Customers';
-import Analytics from './pages/admin/Analytics';
-import AdminExchanges from './pages/admin/AdminExchanges';
-import Coupons from './pages/admin/Coupons';
-import Reviews from './pages/admin/Reviews';
+// Pages (Lazy Loaded)
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const CollectionsPage = lazy(() => import('./pages/CollectionsPage'));
+const CollectionDetailPage = lazy(() => import('./pages/CollectionDetailPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const DirectorLogin = lazy(() => import('./pages/DirectorLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const Overview = lazy(() => import('./pages/admin/Overview'));
+const Orders = lazy(() => import('./pages/admin/Orders'));
+const Inventory = lazy(() => import('./pages/admin/Inventory'));
+const Customers = lazy(() => import('./pages/admin/Customers'));
+const Analytics = lazy(() => import('./pages/admin/Analytics'));
+const AdminExchanges = lazy(() => import('./pages/admin/AdminExchanges'));
+const Coupons = lazy(() => import('./pages/admin/Coupons'));
+const Reviews = lazy(() => import('./pages/admin/Reviews'));
 
-// Customer Pages
-import Register from './pages/Register';
-import VerifyOTP from './pages/VerifyOTP';
-import Login from './pages/Login';
-import ForgotPassword from './pages/ForgotPassword';
-import VerifyResetOTP from './pages/VerifyResetOTP';
-import ResetPassword from './pages/ResetPassword';
-import AccountPage from './pages/AccountPage';
-import Checkout from './pages/Checkout';
-import OrderSuccess from './pages/OrderSuccess';
-import TrackOrder from './pages/TrackOrder';
-import OrderDetails from './pages/OrderDetails';
-import ExchangesPage from './pages/ExchangesPage';
-import ExchangeDetailsPage from './pages/ExchangeDetailsPage';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
+// Customer Pages (Lazy Loaded)
+const Register = lazy(() => import('./pages/Register'));
+const VerifyOTP = lazy(() => import('./pages/VerifyOTP'));
+const Login = lazy(() => import('./pages/Login'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const VerifyResetOTP = lazy(() => import('./pages/VerifyResetOTP'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const AccountPage = lazy(() => import('./pages/AccountPage'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
+const TrackOrder = lazy(() => import('./pages/TrackOrder'));
+const OrderDetails = lazy(() => import('./pages/OrderDetails'));
+const ExchangesPage = lazy(() => import('./pages/ExchangesPage'));
+const ExchangeDetailsPage = lazy(() => import('./pages/ExchangeDetailsPage'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 
 // Routes & Context
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -87,6 +88,9 @@ export const App: React.FC = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [pageTransitionActive, setPageTransitionActive] = useState(false);
+  const prevPathRef = useRef(location.pathname);
 
   // Determine if header and footer should render (show on all customer-facing routes)
   const showNavbarAndFooter = !location.pathname.startsWith('/admin') && location.pathname !== '/director-login';
@@ -139,6 +143,20 @@ export const App: React.FC = () => {
       ScrollTrigger.refresh();
     }, 500);
     return () => clearTimeout(timer);
+  }, [location.pathname, loading]);
+
+  // 1c. Trigger full-screen loader on route changes
+  useEffect(() => {
+    if (loading) return;
+
+    if (location.pathname !== prevPathRef.current) {
+      prevPathRef.current = location.pathname;
+      setPageTransitionActive(true);
+      const timer = setTimeout(() => {
+        setPageTransitionActive(false);
+      }, 650); // Luxury fade overlay timing
+      return () => clearTimeout(timer);
+    }
   }, [location.pathname, loading]);
 
 
@@ -255,6 +273,11 @@ export const App: React.FC = () => {
                 </div>
               )}
 
+              {/* Route Transition Overlay */}
+              <AnimatePresence>
+                {pageTransitionActive && <PageLoader />}
+              </AnimatePresence>
+
               {/* Navigation (Only show on homepage) */}
               {showNavbarAndFooter && (
                 <Navbar
@@ -285,7 +308,8 @@ export const App: React.FC = () => {
 
               {/* Main Routing Gateway */}
               <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes location={location} key={location.pathname}>
                   <Route
                     path="/"
                     element={
@@ -504,7 +528,8 @@ export const App: React.FC = () => {
                     <Route path="coupons" element={<Coupons />} />
                     <Route path="reviews" element={<Reviews />} />
                   </Route>
-                </Routes>
+                  </Routes>
+                </Suspense>
               </AnimatePresence>
 
               {/* Footer (Only show on homepage) */}
