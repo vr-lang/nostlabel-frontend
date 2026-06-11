@@ -78,7 +78,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onProductClick 
         <HomepageOfferSection
           offer={homepageOffer}
           isFirstSection={true}
-          onAddToCart={onAddToCart}
         />
       )}
       <Hero

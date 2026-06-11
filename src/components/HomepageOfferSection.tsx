@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import type { Product } from '../data/products';
 
 interface HomepageOfferSectionProps {
@@ -15,7 +15,6 @@ interface HomepageOfferSectionProps {
     products?: Product[];
   };
   isFirstSection?: boolean;
-  onAddToCart?: (product: Product, size: 'S' | 'M' | 'L' | 'XL' | 'XXL', color: string) => void;
 }
 
 export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
@@ -33,98 +32,127 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
     navigate(`/product/${slug}`);
   };
 
+  // Luxury benefits list
+  const benefits = [
+    '100% Organic Cotton',
+    '240 GSM Fabric',
+    'Oversized Fit',
+    'Soft & Breathable',
+    'Durable & Long Lasting',
+    'Unisex',
+  ];
+
   return (
     <motion.section
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      className="relative w-full overflow-hidden bg-[#0A0A0A] text-white flex flex-col justify-center items-center px-6 md:px-12 py-16 md:py-24 lg:py-28 z-10 border-b border-white/5"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.0, ease: 'easeOut' }}
+      className="relative w-full min-h-[100dvh] bg-[#070707] text-white flex flex-col justify-between items-center overflow-hidden z-10 select-none px-6 md:px-12 py-10"
       style={{
         paddingTop: isFirstSection ? 'calc(var(--header-height, 80px) + 2rem)' : '4rem',
       }}
       id="homepage-offer-section"
     >
-      {/* Background radial highlight */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,160,89,0.06)_0%,transparent_60%)] pointer-events-none" />
+      {/* Luxury Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,160,89,0.07)_0%,transparent_70%)] pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_40%,rgba(7,7,7,0.95)_95%)] pointer-events-none z-0" />
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-        {/* Left Column: Offer Details Copy */}
-        <div className="lg:col-span-6 flex flex-col text-left space-y-6 lg:space-y-8 z-10">
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Sparkles size={12} className="text-accent-gold" />
-              <span className="text-[10px] md:text-xs tracking-[0.3em] font-semibold text-accent-gold uppercase block">
-                {offer.subtitle || 'LIMITED TIME OFFER'}
-              </span>
-            </div>
-            <h1 className="font-display text-4xl md:text-6xl xl:text-7xl text-white leading-none uppercase tracking-tight font-bold">
-              {offer.title || 'ANY 2 T-SHIRTS FOR ₹1400'}
-            </h1>
-          </div>
+      {/* Campaign Branding Header */}
+      <div className="w-full flex flex-col items-center text-center space-y-2 z-10">
+        <span className="font-display text-[26px] md:text-[34px] tracking-[0.4em] font-light text-white uppercase block leading-none">
+          NØSTLABEL
+        </span>
+        <div className="flex items-center space-x-1.5 py-1">
+          <Sparkles size={8} className="text-accent-gold animate-pulse" />
+          <span className="text-[9px] md:text-[10px] font-mono tracking-[0.3em] text-accent-gold uppercase block font-semibold">
+            {offer.subtitle || 'LIMITED TIME OFFER'}
+          </span>
+        </div>
+      </div>
 
-          <p className="text-sm md:text-base text-white/60 max-w-md leading-relaxed font-light font-mono">
-            {offer.description || 'Premium Oversized Tees engineered through precision stitching, premium fabrics, and timeless construction.'}
-          </p>
-
-          <div className="pt-2">
-            <button
-              onClick={handleCtaClick}
-              className="bg-accent-gold text-black text-xs uppercase tracking-[0.2em] font-bold px-8 py-4 border border-accent-gold hover:bg-transparent hover:text-white transition-all duration-300 flex items-center space-x-2"
-            >
-              <span>{offer.ctaText || 'SHOP THE OFFER'}</span>
-              <ArrowRight size={14} />
-            </button>
+      {/* Core Typography Layout */}
+      <div className="w-full max-w-4xl flex flex-col items-center text-center space-y-4 md:space-y-6 z-10 my-4">
+        <div className="space-y-1 md:space-y-2">
+          <h2 className="font-display text-[32px] sm:text-[46px] md:text-[56px] xl:text-[68px] leading-none text-white/95 uppercase tracking-tighter font-extrabold">
+            ANY 2 T-SHIRTS
+          </h2>
+          <div className="flex items-center justify-center space-x-3 md:space-x-4">
+            <span className="font-serif italic text-lg sm:text-2xl md:text-3xl text-white/40 font-light">for</span>
+            <span className="font-display text-[50px] sm:text-[72px] md:text-[92px] xl:text-[108px] leading-none text-accent-gold font-black tracking-tight drop-shadow-[0_10px_20px_rgba(197,160,89,0.15)]">
+              ₹{offer.price || '1400'}
+            </span>
           </div>
         </div>
+        
+        <p className="text-[10px] sm:text-xs md:text-sm font-mono tracking-[0.25em] text-white/50 uppercase max-w-md">
+          {offer.description || 'Premium Oversized Tees'}
+        </p>
+      </div>
 
-        {/* Right Column: Two Featured Products */}
-        <div className="lg:col-span-6 z-10">
-          <div className="grid grid-cols-2 gap-4 md:gap-6">
-            {products.slice(0, 2).map((product) => {
-              const price = product.discountPrice || product.price;
-              const hasDiscount = !!product.discountPrice;
-              
-              return (
-                <div
-                  key={product.id}
-                  onClick={() => handleProductClick(product.slug)}
-                  className="group cursor-pointer bg-white/[0.02] border border-white/5 p-4 rounded-sm hover:border-accent-gold/30 hover:bg-white/[0.03] transition-all duration-300 text-left flex flex-col justify-between aspect-[3/4]"
-                >
-                  {/* Thumbnail */}
-                  <div className="w-full aspect-[4/5] bg-white/[0.01] overflow-hidden rounded-xs border border-white/5 relative flex items-center justify-center">
-                    <img
-                      src={product.images[0] || '/logo.png'}
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <span className="text-[10px] font-mono tracking-widest uppercase border border-white/40 px-3 py-1.5 rounded-sm">
-                        VIEW PRODUCT
-                      </span>
-                    </div>
-                  </div>
+      {/* Large Product Campaign Showcase Collage */}
+      {products.length > 0 && (
+        <div className="w-full max-w-2xl flex justify-center items-center relative z-10 py-6 md:py-8 flex-grow max-h-[35vh] sm:max-h-[40vh] md:max-h-[45vh]">
+          <div className="relative w-full max-w-lg h-full flex justify-center items-center aspect-[16/10]">
+            {/* Left Product Image (Offset & Shadow) */}
+            {products[0] && (
+              <motion.div
+                initial={{ x: -40, opacity: 0, rotate: -3 }}
+                animate={{ x: -20, opacity: 1, rotate: -4 }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+                onClick={() => handleProductClick(products[0].slug)}
+                className="absolute left-[15%] w-[45%] aspect-[3/4] bg-[#0E0E0E] border border-white/5 rounded-xs overflow-hidden shadow-2xl shadow-black/80 hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+              >
+                <img
+                  src={products[0].images[0] || '/logo.png'}
+                  alt={products[0].name}
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="eager"
+                />
+              </motion.div>
+            )}
 
-                  {/* Metadata */}
-                  <div className="mt-4 space-y-1">
-                    <span className="text-[8px] font-mono text-white/40 tracking-wider block uppercase">
-                      {product.category || 'T-SHIRTS'}
-                    </span>
-                    <h4 className="font-display text-sm md:text-base text-white uppercase truncate group-hover:text-accent-gold transition-colors">
-                      {product.name}
-                    </h4>
-                    <div className="flex items-center space-x-2 font-mono text-xs">
-                      <span className="font-bold text-accent-gold">₹{price.toLocaleString()}</span>
-                      {hasDiscount && (
-                        <span className="text-white/40 line-through">₹{product.price.toLocaleString()}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {/* Right Product Image (Overlapping & Highlighted) */}
+            {products[1] && (
+              <motion.div
+                initial={{ x: 40, opacity: 0, rotate: 3 }}
+                animate={{ x: 20, opacity: 1, rotate: 4 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                onClick={() => handleProductClick(products[1].slug)}
+                className="absolute right-[15%] w-[45%] aspect-[3/4] bg-[#0E0E0E] border border-white/10 rounded-xs overflow-hidden shadow-2xl shadow-black/80 hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-20"
+              >
+                <img
+                  src={products[1].images[0] || '/logo.png'}
+                  alt={products[1].name}
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="eager"
+                />
+              </motion.div>
+            )}
           </div>
         </div>
+      )}
+
+      {/* Benefits pill grid */}
+      <div className="w-full max-w-2xl flex flex-wrap justify-center gap-2 md:gap-3 z-10 my-4 md:my-6 px-4">
+        {benefits.map((benefit, i) => (
+          <span
+            key={i}
+            className="text-[8px] sm:text-[9px] md:text-[10px] font-mono tracking-widest text-white/50 bg-white/[0.02] border border-white/5 px-3.5 py-1.5 rounded-full uppercase select-none hover:text-accent-gold hover:border-accent-gold/25 transition-all duration-200"
+          >
+            {benefit}
+          </span>
+        ))}
+      </div>
+
+      {/* Call-to-Action Bottom Banner */}
+      <div className="w-full max-w-xs flex flex-col items-center space-y-4 z-10 pt-2">
+        <button
+          onClick={handleCtaClick}
+          className="w-full bg-accent-gold text-black text-[11px] uppercase tracking-[0.25em] font-bold py-4.5 border border-accent-gold hover:bg-transparent hover:text-white transition-all duration-300 shadow-xl shadow-accent-gold/10 font-display flex items-center justify-center space-x-2.5 active:scale-[0.98]"
+        >
+          <span>{offer.ctaText || 'SHOP THE OFFER'}</span>
+          <ArrowRight size={14} className="stroke-[2.5px]" />
+        </button>
       </div>
     </motion.section>
   );
