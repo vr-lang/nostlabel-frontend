@@ -187,7 +187,7 @@ export const OrderSuccess: React.FC = () => {
             </div>
             
             {/* Expected processing notice */}
-            <div className="p-4 bg-[#F5F2EC]/40 border border-text-dark/5 text-[10px] font-mono text-text-dark/60 leading-normal uppercase">
+            <div className="p-4 bg-[#EFECE6]/40 border border-text-dark/5 text-[10px] font-mono text-text-dark/60 leading-normal uppercase">
               Notice: Branded shipping tracking records and confirmation emails have been queued. Standard warehouse dispatch takes 1-2 business days.
             </div>
 

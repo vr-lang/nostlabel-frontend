@@ -129,7 +129,7 @@ export const ExchangesPage: React.FC = () => {
                     <div 
                       key={exc._id || exc.id} 
                       onClick={() => navigate(`/account/exchanges/${exc._id || exc.id}`)}
-                      className="border border-text-dark/10 rounded-sm p-5 bg-[#F5F2EC]/25 hover:bg-text-dark/[0.02] transition-all cursor-pointer flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+                      className="border border-text-dark/10 rounded-sm p-5 bg-[#EFECE6]/25 hover:bg-text-dark/[0.02] transition-all cursor-pointer flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
                     >
                       <div className="flex items-center space-x-4">
                         {productImg && (

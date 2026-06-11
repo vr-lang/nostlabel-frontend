@@ -64,7 +64,7 @@ export const PinnedWords: React.FC = () => {
 
   const coreCards = [
     {
-      num: 280,
+      num: 220,
       suffix: " GSM",
       label: "FABRIC WEIGHT",
       desc: "Heavyweight organic cotton constructs structural drape that outlives movement."

@@ -11,7 +11,9 @@ import {
   Sparkles,
   Menu,
   X,
-  RefreshCw
+  RefreshCw,
+  Tag,
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -37,6 +39,8 @@ export const AdminDashboard: React.FC = () => {
     { id: 'products', label: 'Inventory', path: '/admin/inventory', icon: <Package size={15} />, enabled: true },
     { id: 'customers', label: 'Customers', path: '/admin/customers', icon: <Users size={15} />, enabled: true },
     { id: 'analytics', label: 'Analytics', path: '/admin/analytics', icon: <BarChart3 size={15} />, enabled: true },
+    { id: 'coupons', label: 'Coupons', path: '/admin/coupons', icon: <Tag size={15} />, enabled: true },
+    { id: 'reviews', label: 'Reviews', path: '/admin/reviews', icon: <MessageSquare size={15} />, enabled: true },
   ];
 
   return (

@@ -6,7 +6,6 @@ interface Testimonial {
   location: string;
   review: string;
   rating: number;
-  image: string;
 }
 
 export const Testimonials: React.FC = () => {
@@ -15,29 +14,25 @@ export const Testimonials: React.FC = () => {
       name: "Marcus Vance",
       location: "Copenhagen, DK",
       review: "The drape of the boxy hoodie is unmatched. It retains its architectural stiffness even after multiple cycles. Replaces all my high-end blanks.",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150"
+      rating: 5
     },
     {
       name: "Elena Rostova",
       location: "Berlin, DE",
       review: "NOSTLABEL's shoulder drops are engineered perfectly. Minimal, comfortable, and structured. A brand that actually understands pattern making.",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
+      rating: 5
     },
     {
       name: "Kenji Sato",
       location: "Tokyo, JP",
-      review: "The 280 GSM long-staple cotton feels luxurious and breathes well. The stitching detail along the cuffs and neck ribbing is pristine.",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150"
+      review: "The 220 GSM long-staple cotton feels luxurious and breathes well. The stitching detail along the cuffs and neck ribbing is pristine.",
+      rating: 5
     },
     {
       name: "Chloe Mercier",
       location: "Paris, FR",
       review: "Clean lines, heavy construction, and beautiful muted color tones. The package arrived in a custom linen protective bag. Highly impressed.",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150"
+      rating: 5
     }
   ];
 
@@ -82,11 +77,9 @@ export const Testimonials: React.FC = () => {
 
               {/* Reviewer Meta */}
               <div className="flex items-center space-x-4 pt-4 border-t border-white/5">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-10 h-10 rounded-full object-cover border border-white/10"
-                />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-accent-gold/15 border border-accent-gold/30 text-accent-gold text-[10px] font-bold font-mono tracking-wider shrink-0 uppercase">
+                  {item.name.split(' ').map(n => n[0]).join('')}
+                </div>
                 <div className="text-left">
                   <h4 className="text-xs font-bold text-text-light uppercase tracking-wider">
                     {item.name}

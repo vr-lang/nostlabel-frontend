@@ -74,6 +74,72 @@ export const adminService = {
       console.error('Failed to load inventory alerts:', error);
       throw new Error(error.response?.data?.message || 'Failed to load inventory alerts');
     }
+  },
+
+  async getCoupons() {
+    try {
+      const response = await apiClient.get('/coupons');
+      if (response.data && response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (error: any) {
+      console.error('Failed to load coupons:', error);
+      throw new Error(error.response?.data?.message || 'Failed to load coupons');
+    }
+  },
+
+  async createCoupon(data: any) {
+    try {
+      const response = await apiClient.post('/coupons', data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to create coupon:', error);
+      throw new Error(error.response?.data?.message || 'Failed to create coupon');
+    }
+  },
+
+  async updateCoupon(id: string, data: any) {
+    try {
+      const response = await apiClient.put(`/coupons/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to update coupon:', error);
+      throw new Error(error.response?.data?.message || 'Failed to update coupon');
+    }
+  },
+
+  async deleteCoupon(id: string) {
+    try {
+      const response = await apiClient.delete(`/coupons/${id}`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to delete coupon:', error);
+      throw new Error(error.response?.data?.message || 'Failed to delete coupon');
+    }
+  },
+
+  async getAllReviewsAdmin() {
+    try {
+      const response = await apiClient.get('/reviews');
+      if (response.data && response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (error: any) {
+      console.error('Failed to load admin reviews:', error);
+      throw new Error(error.response?.data?.message || 'Failed to load reviews');
+    }
+  },
+
+  async deleteReviewAdmin(id: string) {
+    try {
+      const response = await apiClient.delete(`/reviews/${id}`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to delete review:', error);
+      throw new Error(error.response?.data?.message || 'Failed to delete review');
+    }
   }
 };
 export default adminService;

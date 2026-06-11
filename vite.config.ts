@@ -12,7 +12,7 @@ export default defineConfig({
     port: 3001,
     proxy: {
       '/api': {
-        target: 'https://nostlable-backend.onrender.com',
+        target: 'https://nostlabel-backend.onrender.com',
         changeOrigin: true,
       },
     },

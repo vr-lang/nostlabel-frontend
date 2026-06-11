@@ -20,9 +20,11 @@ export const CollectionsPage: React.FC<{ onProductClick: (product: Product) => v
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     const fetchCollectionsData = async () => {
       try {
         const prods = await productService.getAllProducts();
+        if (!active) return;
         
         if (prods.length > 0) {
           setCollection({
@@ -38,10 +40,15 @@ export const CollectionsPage: React.FC<{ onProductClick: (product: Product) => v
       } catch (err) {
         console.error("Failed to load collection:", err);
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     };
     fetchCollectionsData();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const containerVariants = {
@@ -63,7 +70,9 @@ export const CollectionsPage: React.FC<{ onProductClick: (product: Product) => v
     }
   };
 
-  if (loading) {
+  const isPageLoading = loading;
+
+  if (isPageLoading) {
     return (
       <div className="min-h-screen bg-bg-cream-1 pt-32 pb-24 px-6 md:px-12 xl:px-24 animate-pulse">
         <div className="max-w-7xl mx-auto h-16 bg-text-dark/5 w-1/3 rounded-xs mb-12" />

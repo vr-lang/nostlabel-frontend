@@ -4,8 +4,6 @@ import { ArrowUpRight } from 'lucide-react';
 import { productService } from '../services/productService';
 import type { Product } from '../data/products';
 
-const NOSTLABEL_PLACEHOLDER = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000";
-
 interface FeaturedCollectionProps {
   onCategoryClick: (category: string) => void;
 }
@@ -38,17 +36,25 @@ export const FeaturedCollection: React.FC<FeaturedCollectionProps> = ({ onCatego
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const data = await productService.getAllProducts();
+        if (!active) return;
         setProducts(data);
       } catch (err) {
         console.error("Failed to load products for bento grid:", err);
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     };
     fetchProducts();
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Default mock cards
@@ -58,7 +64,7 @@ export const FeaturedCollection: React.FC<FeaturedCollectionProps> = ({ onCatego
       title: 'Limited Drops',
       subtitle: 'RELEASE 004',
       size: 'large',
-      image: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&q=80&w=1200',
+      image: '/logo.png',
       description: 'Exclusive technical utility outer garments produced in limited numbered runs. Water-resistant shells with modular layering panels.',
       count: '04 items',
       categoryLink: 'Limited Drops'
@@ -68,24 +74,32 @@ export const FeaturedCollection: React.FC<FeaturedCollectionProps> = ({ onCatego
       title: 'Oversized Tees',
       subtitle: 'ESSENTIAL SHAPES',
       size: 'medium',
-      image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=800',
-      description: 'Ultra-heavy 280 GSM cotton tees featuring custom box cuts and drop shoulders.',
+      image: '/logo.png',
+      description: 'Ultra-heavy 220 GSM cotton tees featuring custom box cuts and drop shoulders.',
       count: '06 items',
       categoryLink: 'Oversized T-Shirts'
     }
   ];
 
   // Dynamic mapping: Replace mockCards items with actual products if available
-  const cards = mockCards.map((mockCard, index) => {
-    const product = products[index];
-    if (!product) return mockCard; // Fallback to mock card
+  const cards = mockCards.map((mockCard) => {
+    // Find product matching category that has images, or fall back to any product with images
+    const product = products.find(p => p.category.toLowerCase() === mockCard.categoryLink.toLowerCase() && p.images && p.images.length > 0)
+                    || products.find(p => p.images && p.images.length > 0);
+    
+    if (!product) {
+      return {
+        ...mockCard,
+        image: '/logo.png'
+      };
+    }
 
     return {
       id: product.id,
       title: product.name,
       subtitle: product.category.toUpperCase(),
       size: mockCard.size,
-      image: product.images[0] || NOSTLABEL_PLACEHOLDER,
+      image: product.images[0] || '/logo.png',
       description: product.description.length > 130 
         ? `${product.description.slice(0, 130)}...` 
         : product.description,
@@ -150,7 +164,7 @@ export const FeaturedCollection: React.FC<FeaturedCollectionProps> = ({ onCatego
           </p>
         </div>
 
-        {/* Bento Grid */}
+        {/* Dynamic Grid Layout */}
         {loading ? (
           <FeaturedCollectionSkeleton />
         ) : (

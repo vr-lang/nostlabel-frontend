@@ -5,12 +5,14 @@ import { productService } from '../services/productService';
 export const BrandStory: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.15 });
-  const [imageUrl, setImageUrl] = useState("https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&q=80&w=800");
+  const [imageUrl, setImageUrl] = useState("/logo.png");
 
   useEffect(() => {
+    let active = true;
     const fetchImage = async () => {
       try {
         const products = await productService.getAllProducts();
+        if (!active) return;
         const featured = products.find(p => p.featured && p.images && p.images.length > 0);
         const latest = products.find(p => p.images && p.images.length > 0);
         const targetProduct = featured || latest;
@@ -22,6 +24,9 @@ export const BrandStory: React.FC = () => {
       }
     };
     fetchImage();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const containerVariants = {

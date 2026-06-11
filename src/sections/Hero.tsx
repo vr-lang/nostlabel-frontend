@@ -5,7 +5,7 @@ import { HERO_PRODUCTS } from '../data/products';
 import type { Product } from '../data/products';
 import { productService } from '../services/productService';
 
-const NOSTLABEL_PLACEHOLDER = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000";
+const NOSTLABEL_PLACEHOLDER = "/logo.png";
 
 interface HeroProps {
   onShopClick: () => void;
@@ -58,7 +58,7 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick, onExploreClick, onAddTo
   
   // Background colors corresponding to products for dynamic transitions
   const bgColors = [
-    '#F8F5F0', // Cream 1
+    '#F5F3EF', // Cream 1
     '#F0ECE3', // Darker neutral
     '#E9E5DB', // Warm Khaki neutral
     '#E1DCD1', // Warm Sand neutral
@@ -181,8 +181,8 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick, onExploreClick, onAddTo
               ARCHITECTURAL STREETWEAR
             </span>
             <h1 className="font-display text-4xl md:text-6xl xl:text-7xl text-text-dark leading-none uppercase tracking-tight">
-              DESIGNED TO FLOAT.<br />
-              BUILT TO LAST.
+              NOT JUST A CLOTHING.<br />
+              A FEELING.
             </h1>
           </div>
 
@@ -444,8 +444,8 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick, onExploreClick, onAddTo
             ARCHITECTURAL STREETWEAR
           </span>
           <h1 className="font-display text-4xl md:text-5xl leading-tight text-text-dark uppercase tracking-tight">
-            DESIGNED TO FLOAT.<br />
-            BUILT TO LAST.
+            NOT JUST A CLOTHING.<br />
+            A FEELING.
           </h1>
           <p className="text-xs text-text-dark/70 font-light leading-relaxed max-w-md mx-auto">
             Minimal silhouettes engineered through precision stitching, premium fabrics, and timeless construction.
@@ -543,8 +543,8 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick, onExploreClick, onAddTo
             ARCHITECTURAL STREETWEAR
           </span>
           <h1 className="font-display text-[42px] xs:text-[48px] sm:text-[54px] leading-[1.1] text-text-dark uppercase tracking-tight">
-            DESIGNED TO FLOAT.<br />
-            BUILT TO LAST.
+            NOT JUST A CLOTHING.<br />
+            A FEELING.
           </h1>
           <p className="text-xs text-text-dark/70 font-light leading-relaxed max-w-xs mx-auto">
             Minimal silhouettes engineered through precision stitching, premium fabrics, and timeless construction.

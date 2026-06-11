@@ -6,7 +6,7 @@ import { productService, type Category } from '../services/productService';
 import type { Product } from '../data/products';
 import GrainOverlay from '../components/GrainOverlay';
 
-const NOSTLABEL_PLACEHOLDER = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000";
+const NOSTLABEL_PLACEHOLDER = "/logo.png";
 
 export const CollectionDetailPage: React.FC<{ onProductClick: (product: Product) => void }> = ({ onProductClick }) => {
   const { slug } = useParams<{ slug: string }>();
@@ -16,6 +16,7 @@ export const CollectionDetailPage: React.FC<{ onProductClick: (product: Product)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     const fetchCollectionDetails = async () => {
       try {
         if (!slug) return;
@@ -23,6 +24,8 @@ export const CollectionDetailPage: React.FC<{ onProductClick: (product: Product)
           productService.getCategories(),
           productService.getAllProducts()
         ]);
+
+        if (!active) return;
 
         if (slug === 'oversized-tees') {
           const catName = "Oversized Tees";
@@ -87,10 +90,15 @@ export const CollectionDetailPage: React.FC<{ onProductClick: (product: Product)
       } catch (err) {
         console.error("Failed to load collection details:", err);
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     };
     fetchCollectionDetails();
+    return () => {
+      active = false;
+    };
   }, [slug]);
 
   const containerVariants = {
@@ -112,7 +120,9 @@ export const CollectionDetailPage: React.FC<{ onProductClick: (product: Product)
     }
   };
 
-  if (loading) {
+  const isPageLoading = loading;
+
+  if (isPageLoading) {
     return (
       <div className="min-h-screen bg-bg-cream-1 pt-32 pb-24 px-6 md:px-12 xl:px-24 animate-pulse">
         <div className="max-w-7xl mx-auto space-y-4 mb-16 shadow-xs">

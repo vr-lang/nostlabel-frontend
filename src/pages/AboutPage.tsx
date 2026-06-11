@@ -139,7 +139,7 @@ export const AboutPage: React.FC = () => {
             <div className="border border-text-dark/10 p-8 bg-white/40 backdrop-blur-md flex flex-col justify-between min-h-[220px] rounded-xs group hover:border-accent-gold/20 hover:shadow-lg transition-all duration-300">
               <Cpu className="text-accent-gold w-6 h-6 transition-transform group-hover:scale-110" />
               <div className="space-y-2 mt-8">
-                <h3 className="font-display text-lg uppercase text-text-dark">240 GSM Heavyweight</h3>
+                <h3 className="font-display text-lg uppercase text-text-dark">220 GSM Heavyweight</h3>
                 <p className="text-[10px] font-mono text-text-dark/50 uppercase leading-normal">
                   Heavy knit density that holds its architectural silhouette and box fit throughout the day.
                 </p>

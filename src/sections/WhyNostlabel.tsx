@@ -10,7 +10,7 @@ const CARDS = [
     gridSpan: "lg:col-span-2"
   },
   {
-    title: "240 GSM HEAVYWEIGHT FABRIC",
+    title: "220 GSM HEAVYWEIGHT FABRIC",
     description: "Engineered heavyweight density designed to hold a clean boxy drape that outlives movement.",
     icon: Shield,
     gridSpan: "lg:col-span-2"

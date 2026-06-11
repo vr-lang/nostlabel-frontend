@@ -19,7 +19,7 @@ import { orderService } from '../services/orderService';
 import { apiClient } from '../services/authService';
 import ConfirmationModal from '../components/common/ConfirmationModal';
 
-const NOSTLABEL_PLACEHOLDER = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000";
+const NOSTLABEL_PLACEHOLDER = "/logo.png";
 
 interface CheckoutProps {
   cartItems: any[];
@@ -325,7 +325,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="bg-[#F5F2EC]/30 border border-text-dark/10 p-6 rounded-sm space-y-5 overflow-hidden"
+                    className="bg-[#EFECE6]/30 border border-text-dark/10 p-6 rounded-sm space-y-5 overflow-hidden"
                   >
                     <form onSubmit={handleSaveAddress} className="space-y-4">
                       <div className="flex items-center justify-between border-b border-text-dark/5 pb-2 mb-2">

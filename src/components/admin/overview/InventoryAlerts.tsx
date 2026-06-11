@@ -77,7 +77,7 @@ export const InventoryAlerts: React.FC<InventoryAlertsProps> = ({
           // Alerts List
           products.map((product) => {
             const firstSku = product.variants?.[0]?.sku || 'N/A';
-            const imageUrl = product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=200';
+            const imageUrl = product.images?.[0] || '/logo.png';
             
             return (
               <div

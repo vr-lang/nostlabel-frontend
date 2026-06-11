@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { productService } from '../services/productService';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -8,8 +9,23 @@ export const ScrollStory: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const [imgSrc, setImgSrc] = useState<string>('/logo.png');
 
   useEffect(() => {
+    // Fetch first product image dynamically
+    productService.getAllProducts().then((products) => {
+      if (products && products.length > 0) {
+        const firstProductWithImage = products.find(
+          (p) => p.images && p.images.length > 0
+        );
+        if (firstProductWithImage && firstProductWithImage.images?.[0]) {
+          setImgSrc(firstProductWithImage.images[0]);
+        }
+      }
+    }).catch(err => {
+      console.error('Failed to load dynamic scroll story image:', err);
+    });
+
     const ctx = gsap.context(() => {
       // 1. Text letter-by-letter stagger reveal (Play Once)
       const chars = textRef.current?.querySelectorAll('.char');
@@ -90,7 +106,7 @@ export const ScrollStory: React.FC = () => {
         className="absolute w-[80vw] md:w-[50vw] h-[60vh] md:h-[70vh] flex items-center justify-center z-0 opacity-40 md:opacity-50"
       >
         <img
-          src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=1000"
+          src={imgSrc}
           alt="Floating Garment Movement"
           className="w-full h-full object-contain filter grayscale contrast-125"
         />

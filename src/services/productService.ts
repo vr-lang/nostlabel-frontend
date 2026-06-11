@@ -7,7 +7,7 @@ const mapProduct = (p: any): Product => ({
   slug: p.slug,
   description: p.description,
   material: p.brand === 'Nostlable' ? '100% Organic Cotton' : p.brand,
-  gsm: p.description.includes('GSM') ? p.description.match(/\d+\s*GSM/)?.[0] || '280 GSM' : '280 GSM',
+  gsm: p.description.includes('GSM') ? p.description.match(/\d+\s*GSM/)?.[0] || '220 GSM' : '220 GSM',
   price: p.price,
   discountPrice: p.discountPrice,
   colors: p.colors || [],
@@ -167,6 +167,62 @@ export const productService = {
     } catch (error: any) {
       console.error('Failed to delete product:', error);
       throw new Error(error.response?.data?.message || 'Failed to delete product');
+    }
+  },
+
+  async getProductReviews(productId: string) {
+    try {
+      const response = await apiClient.get(`/reviews/product/${productId}`);
+      if (response.data && response.data.success) {
+        return response.data.data;
+      }
+      return { reviews: [], stats: { averageRating: 0, reviewCount: 0, breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } } };
+    } catch (error: any) {
+      console.error('Failed to load product reviews:', error);
+      return { reviews: [], stats: { averageRating: 0, reviewCount: 0, breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } } };
+    }
+  },
+
+  async checkCanReview(productId: string) {
+    try {
+      const response = await apiClient.get(`/reviews/can-review/${productId}`);
+      if (response.data && response.data.success) {
+        return response.data.data.canReview;
+      }
+      return false;
+    } catch (error: any) {
+      console.error('Failed to check review eligibility:', error);
+      return false;
+    }
+  },
+
+  async addReview(data: { product: string; rating: number; comment: string }) {
+    try {
+      const response = await apiClient.post('/reviews', data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to add review:', error);
+      throw new Error(error.response?.data?.message || 'Failed to submit review');
+    }
+  },
+
+  async updateReview(id: string, data: { rating: number; comment: string }) {
+    try {
+      const response = await apiClient.put(`/reviews/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to update review:', error);
+      throw new Error(error.response?.data?.message || 'Failed to update review');
+    }
+  },
+
+  async deleteReview(id: string) {
+    try {
+      const response = await apiClient.delete(`/reviews/${id}`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Failed to delete review:', error);
+      throw new Error(error.response?.data?.message || 'Failed to delete review');
     }
   }
 };

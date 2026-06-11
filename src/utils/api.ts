@@ -1,11 +1,10 @@
 import type { Product } from '../data/products';
-
-const API_BASE = 'https://nostlabel-backend.onrender.com/api';
+import { API_BASE_URL as API_BASE } from '../config/api';
 
 // Simple API response helper
-async function apiFetch(endpoint: string, options: RequestInit = {}) {
+async function apiFetch(endpoint: string, options: RequestInit = {}): Promise<any> {
   const url = `${API_BASE}${endpoint}`;
-  
+
   const token = localStorage.getItem('nostlabel_admin_token');
   const headers = new Headers(options.headers);
   
@@ -20,30 +19,25 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const config = {
     ...options,
     headers,
-
   };
 
-  try {
-    const response = await fetch(url, config);
-    
-    // Attempt to parse JSON response
-    let data;
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      data = await response.json();
-    } else {
-      data = await response.text();
-    }
+  const response = await fetch(url, config);
+  const status = response.status;
 
-    if (!response.ok) {
-      throw new Error(data?.message || `HTTP error! Status: ${response.status}`);
-    }
-
-    return data;
-  } catch (error) {
-    console.warn(`API Error on ${endpoint}:`, error);
-    throw error;
+  // Attempt to parse JSON response
+  let data;
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    data = await response.json();
+  } else {
+    data = await response.text();
   }
+
+  if (!response.ok && status !== 304) {
+    throw new Error(data?.message || `HTTP error! Status: ${status}`);
+  }
+
+  return data;
 }
 
 export const api = {
@@ -59,7 +53,7 @@ export const api = {
           slug: p.slug,
           description: p.description,
           material: p.brand === 'Nostlable' ? '100% Organic Cotton' : p.brand,
-          gsm: p.description.includes('GSM') ? p.description.match(/\d+\s*GSM/)?.[0] || '280 GSM' : '280 GSM',
+          gsm: p.description.includes('GSM') ? p.description.match(/\d+\s*GSM/)?.[0] || '220 GSM' : '220 GSM',
           price: p.price,
           discountPrice: p.discountPrice,
           colors: p.colors || [],
@@ -86,7 +80,7 @@ export const api = {
           slug: p.slug,
           description: p.description,
           material: '100% Organic Cotton',
-          gsm: '280 GSM',
+          gsm: '220 GSM',
           price: p.price,
           discountPrice: p.discountPrice,
           colors: p.colors || [],

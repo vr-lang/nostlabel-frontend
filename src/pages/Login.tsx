@@ -67,7 +67,7 @@ export const Login: React.FC = () => {
   return (
     <div
       onMouseMove={handleMouseMove}
-      className="relative min-h-screen w-screen bg-[#F8F5F0] overflow-hidden flex flex-col justify-between items-center py-20 px-6 select-none z-10 font-body"
+      className="relative min-h-screen w-screen bg-[#F5F3EF] overflow-hidden flex flex-col justify-between items-center py-20 px-6 select-none z-10 font-body"
       id="customer-login-root"
     >
       <GrainOverlay />

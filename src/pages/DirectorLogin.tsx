@@ -56,7 +56,7 @@ export const DirectorLogin: React.FC = () => {
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative min-h-screen w-screen bg-[#F8F5F0] overflow-hidden flex flex-col justify-between items-center py-12 px-6 select-none z-10"
+      className="relative min-h-screen w-screen bg-[#F5F3EF] overflow-hidden flex flex-col justify-between items-center py-12 px-6 select-none z-10"
       id="director-login-root"
     >
       <GrainOverlay />

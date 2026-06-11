@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { type Product } from '../data/products';
 import { productService } from '../services/productService';
 
-const NOSTLABEL_PLACEHOLDER = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000";
+const NOSTLABEL_PLACEHOLDER = "/logo.png";
 
 interface BestSellersProps {
   onProductClick: (product: Product) => void;
@@ -33,26 +33,33 @@ export const BestSellers: React.FC<BestSellersProps> = ({ onProductClick }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const data = await productService.getAllProducts();
+        if (!active) return;
+
         // Filter bestsellers or use all products if no bestsellers found
         const filtered = data.filter(p => p.bestseller);
         const finalData = filtered.length > 0 ? filtered : data;
 
-        if (finalData.length > 0) {
-          setProducts(finalData);
-        } else {
-          setProducts([]);
-        }
+        setProducts(finalData);
       } catch (err) {
         console.error("Failed to load products for Best Sellers:", err);
-        setProducts([]);
+        if (active) {
+          setProducts([]);
+        }
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     };
     fetchProducts();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const containerVariants = {

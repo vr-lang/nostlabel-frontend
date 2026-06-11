@@ -326,7 +326,7 @@ export const AccountPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F5F0] pt-32 pb-24 px-6 md:px-12 selection:bg-accent-gold/30 relative font-body overflow-x-hidden">
+    <div className="min-h-screen bg-[#F5F3EF] pt-32 pb-24 px-6 md:px-12 selection:bg-accent-gold/30 relative font-body overflow-x-hidden">
       <GrainOverlay />
 
       {/* Global Notification Banner */}
@@ -443,7 +443,7 @@ export const AccountPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                   {/* Profile Image Column */}
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="relative w-32 h-32 rounded-full border border-text-dark/10 overflow-hidden bg-[#F5F2EC] flex items-center justify-center group shadow-md">
+                    <div className="relative w-32 h-32 rounded-full border border-text-dark/10 overflow-hidden bg-[#EFECE6] flex items-center justify-center group shadow-md">
                       {profileImage ? (
                         <img src={profileImage} alt={profileName} className="w-full h-full object-cover" />
                       ) : (
@@ -598,7 +598,7 @@ export const AccountPage: React.FC = () => {
                 ) : (
                   <div className="space-y-4">
                     {orders.map((ord) => (
-                      <div key={ord._id} className="border border-text-dark/10 rounded-sm overflow-hidden bg-[#F5F2EC]/25">
+                      <div key={ord._id} className="border border-text-dark/10 rounded-sm overflow-hidden bg-[#EFECE6]/25">
                         {/* Order Header Grid */}
                         <div
                           onClick={() => toggleOrderExpand(ord._id)}
@@ -783,7 +783,7 @@ export const AccountPage: React.FC = () => {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border border-text-dark/10 p-6 rounded-sm bg-[#F5F2EC]/20 overflow-hidden"
+                      className="border border-text-dark/10 p-6 rounded-sm bg-[#EFECE6]/20 overflow-hidden"
                     >
                       <form onSubmit={handleSaveAddress} className="space-y-5">
                         <div className="flex items-center justify-between border-b border-text-dark/5 pb-2 mb-2">

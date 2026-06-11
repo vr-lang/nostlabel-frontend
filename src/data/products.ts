@@ -30,15 +30,12 @@ export const HERO_PRODUCTS: Product[] = [
     slug: "oversized-signature-tee",
     description: "Engineered with a heavy drop-shoulder silhouette, tight collar ribbing, and double-needle construction. Built from organic long-staple cotton for a structured drape.",
     material: "100% Organic Cotton",
-    gsm: "280 GSM Heavyweight Rib",
+    gsm: "220 GSM Heavyweight Rib",
     price: 1499,
     discountPrice: 1199,
     colors: ["Charcoal", "Off-White", "Sage"],
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Oversized T-Shirts",
     featured: true,
     bestseller: true,
@@ -59,15 +56,12 @@ export const HERO_PRODUCTS: Product[] = [
     slug: "heavyweight-boxy-hoodie",
     description: "Architectural proportions meet daily comfort. Double-lined crossover hood without drawstrings, kangaroo pouch pocket, and tight elasticated cuffs. Heavy loopback fleece finish.",
     material: "100% Cotton Fleece",
-    gsm: "450 GSM Custom Loopback",
+    gsm: "220 GSM Custom Loopback",
     price: 3499,
     discountPrice: 2999,
     colors: ["Ash Black", "Sand", "Slate Blue"],
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [
-      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Hoodies",
     featured: true,
     bestseller: true,
@@ -86,15 +80,12 @@ export const HERO_PRODUCTS: Product[] = [
     slug: "architectural-cargo-pants",
     description: "Relaxed-fit straight-leg cargo trouser crafted in thick cotton canvas. Features custom metal rivets, detailed knee articulation panels, and 3D cargo pockets.",
     material: "100% Double-Weave Cotton Canvas",
-    gsm: "380 GSM Technical Canvas",
+    gsm: "220 GSM Technical Canvas",
     price: 2799,
     discountPrice: 2499,
     colors: ["Olive", "Obsidian Black"],
     sizes: ["S", "M", "L", "XL"],
-    images: [
-      "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Essentials",
     featured: true,
     variants: [
@@ -116,10 +107,7 @@ export const HERO_PRODUCTS: Product[] = [
     discountPrice: 3999,
     colors: ["Steel Grey", "Dark Sand"],
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [
-      "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Limited Drops",
     featured: true,
     variants: [
@@ -139,13 +127,11 @@ export const ALL_PRODUCTS: Product[] = [
     slug: "minimalist-mockneck-sweatshirt",
     description: "Double knit technical ribbing at collar, drop sleeve seams, brushed internal fleece. Clean, understated silhouette.",
     material: "85% Cotton, 15% Polyester",
-    gsm: "400 GSM Heavy Fleece",
+    gsm: "220 GSM Heavy Fleece",
     price: 2999,
     colors: ["Off-White", "Midnight Navy"],
     sizes: ["S", "M", "L", "XL"],
-    images: [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Essentials",
     bestseller: true,
     variants: [
@@ -161,13 +147,11 @@ export const ALL_PRODUCTS: Product[] = [
     slug: "classic-relaxed-linen-shirt",
     description: "Premium French linen woven for ultimate breathability. Spread collar, French placket, and single box pleat at the back yoke.",
     material: "100% French Linen",
-    gsm: "160 GSM Linen",
+    gsm: "220 GSM Linen",
     price: 1999,
     colors: ["Ecru", "Pure White"],
     sizes: ["S", "M", "L", "XL"],
-    images: [
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Shirts",
     bestseller: true,
     variants: [
@@ -183,13 +167,11 @@ export const ALL_PRODUCTS: Product[] = [
     slug: "raw-selvedge-denim-jacket",
     description: "Unwashed 14oz Japanese selvedge denim. Over time, it conforms to your movements, creating unique wear patterns. Custom branded brass hardware.",
     material: "100% Japanese Selvedge Cotton",
-    gsm: "14 oz Heavyweight Denim",
+    gsm: "220 GSM Heavyweight Denim",
     price: 4999,
     colors: ["Raw Indigo"],
     sizes: ["M", "L", "XL"],
-    images: [
-      "https://images.unsplash.com/photo-1611312449412-6cefac5dc3e4?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Limited Drops",
     variants: [
       { size: "M", color: "Raw Indigo", stock: 8, sku: "NST-DNM-M-IND" },
@@ -203,13 +185,11 @@ export const ALL_PRODUCTS: Product[] = [
     slug: "architectural-heavy-knit-tee",
     description: "Structured luxury knitwear with ribbed detailing. A heavy drape that keeps its shape throughout the day.",
     material: "80% Cotton, 20% Silk Blend",
-    gsm: "320 GSM Premium Knit",
+    gsm: "220 GSM Premium Knit",
     price: 1899,
     colors: ["Oatmeal", "Slate"],
     sizes: ["S", "M", "L", "XL"],
-    images: [
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&q=80&w=1000"
-    ],
+    images: ["/logo.png"],
     category: "Oversized T-Shirts",
     bestseller: true,
     variants: [

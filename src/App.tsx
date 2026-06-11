@@ -28,6 +28,8 @@ import Inventory from './pages/admin/Inventory';
 import Customers from './pages/admin/Customers';
 import Analytics from './pages/admin/Analytics';
 import AdminExchanges from './pages/admin/AdminExchanges';
+import Coupons from './pages/admin/Coupons';
+import Reviews from './pages/admin/Reviews';
 
 // Customer Pages
 import Register from './pages/Register';
@@ -58,7 +60,7 @@ const CustomerProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ child
 
   if (loading) {
     return (
-      <div className="h-screen w-screen bg-[#F8F5F0] flex items-center justify-center select-none animate-pulse">
+      <div className="h-screen w-screen bg-[#F5F3EF] flex items-center justify-center select-none animate-pulse">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-8 h-8 rounded-full border border-text-dark border-t-transparent animate-spin" />
           <span className="text-[10px] font-mono text-text-dark/40 tracking-widest uppercase">
@@ -102,7 +104,7 @@ export const App: React.FC = () => {
               slug: item.product.slug,
               description: item.product.description,
               material: '100% Organic Cotton',
-              gsm: '280 GSM',
+              gsm: '220 GSM',
               price: item.price,
               images: (item.product.images || []).map((img: any) => typeof img === 'string' ? img : (img.url || '')),
               colors: item.product.colors || [],
@@ -121,7 +123,12 @@ export const App: React.FC = () => {
       }
     };
     if (!loading) {
-      syncCart();
+      const token = localStorage.getItem('nostlabel_admin_token');
+      if (token) {
+        syncCart();
+      } else {
+        setCartItems([]);
+      }
     }
   }, [loading, location.pathname]);
 
@@ -159,10 +166,13 @@ export const App: React.FC = () => {
     setCartItems(updatedCart);
     showNotification(`ADDED ${product.name} (${size}) TO BAG`);
 
-    try {
-      await api.addToCart(product.id, quantity, size, color);
-    } catch {
-      // Standalone fallback
+    const token = localStorage.getItem('nostlabel_admin_token');
+    if (token) {
+      try {
+        await api.addToCart(product.id, quantity, size, color);
+      } catch {
+        // Standalone fallback
+      }
     }
   };
 
@@ -175,10 +185,13 @@ export const App: React.FC = () => {
     });
     setCartItems(updatedCart);
 
-    try {
-      await api.updateCartItem(productId, quantity, size, color);
-    } catch {
-      // Fallback
+    const token = localStorage.getItem('nostlabel_admin_token');
+    if (token) {
+      try {
+        await api.updateCartItem(productId, quantity, size, color);
+      } catch {
+        // Fallback
+      }
     }
   };
 
@@ -189,10 +202,13 @@ export const App: React.FC = () => {
     setCartItems(updatedCart);
     showNotification("ITEM REMOVED FROM BAG");
 
-    try {
-      await api.removeFromCart(productId, size, color);
-    } catch {
-      // Fallback
+    const token = localStorage.getItem('nostlabel_admin_token');
+    if (token) {
+      try {
+        await api.removeFromCart(productId, size, color);
+      } catch {
+        // Fallback
+      }
     }
   };
 
@@ -223,284 +239,286 @@ export const App: React.FC = () => {
     <AuthProvider>
       <LenisProvider>
         <ScrollToTop />
-        {/* Cinematic preloader */}
-        {loading && <Preloader onComplete={() => setLoading(false)} />}
+          {/* Cinematic preloader */}
+          {loading && <Preloader onComplete={() => setLoading(false)} />}
 
-        {!loading && (
-          <div className="relative min-h-screen selection:bg-accent-gold/30 selection:text-text-dark">
-            {/* Global Visual Overlays */}
-            <GrainOverlay />
+          {!loading && (
+            <div className="relative min-h-screen selection:bg-accent-gold/30 selection:text-text-dark">
+              {/* Global Visual Overlays */}
+              <GrainOverlay />
 
 
-            {/* Toast Notification */}
-            {notification && (
-              <div className="fixed top-24 right-6 md:right-12 z-50 bg-bg-dark-1 border border-accent-gold/40 text-white text-[10px] uppercase font-bold tracking-widest px-6 py-4.5 shadow-2xl rounded-sm animate-bounce font-mono">
-                {notification}
-              </div>
-            )}
+              {/* Toast Notification */}
+              {notification && (
+                <div className="fixed top-24 right-6 md:right-12 z-50 bg-bg-dark-1 border border-accent-gold/40 text-white text-[10px] uppercase font-bold tracking-widest px-6 py-4.5 shadow-2xl rounded-sm animate-bounce font-mono">
+                  {notification}
+                </div>
+              )}
 
-            {/* Navigation (Only show on homepage) */}
-            {showNavbarAndFooter && (
-              <Navbar
-                cartCount={totalCartCount}
-                onCartClick={() => setCartOpen(true)}
-                onSearchClick={() => setSearchOpen(true)}
-                onNavigateToSection={handleNavigateToSection}
+              {/* Navigation (Only show on homepage) */}
+              {showNavbarAndFooter && (
+                <Navbar
+                  cartCount={totalCartCount}
+                  onCartClick={() => setCartOpen(true)}
+                  onSearchClick={() => setSearchOpen(true)}
+                  onNavigateToSection={handleNavigateToSection}
+                />
+              )}
+
+              {/* Layout Modals */}
+              <CartDrawer
+                isOpen={cartOpen}
+                onClose={() => setCartOpen(false)}
+                cartItems={cartItems}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemoveItem={handleRemoveItem}
+                onCheckout={handleCheckout}
               />
-            )}
 
-            {/* Layout Modals */}
-            <CartDrawer
-              isOpen={cartOpen}
-              onClose={() => setCartOpen(false)}
-              cartItems={cartItems}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemoveItem={handleRemoveItem}
-              onCheckout={handleCheckout}
-            />
-
-            <SearchModal
-              isOpen={searchOpen}
-              onClose={() => setSearchOpen(false)}
-              onProductClick={handleProductDetails}
-            />
-
-
-
-            {/* Main Routing Gateway */}
-            <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-                <Route
-                  path="/"
-                  element={
-                    <PageTransition>
-                      <HomePage
-                        onAddToCart={handleAddToCart}
-                        onProductClick={handleProductDetails}
-                      />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/product/:slug"
-                  element={
-                    <PageTransition>
-                      <ProductDetailPage
-                        onAddToCart={handleAddToCart}
-                      />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/collections"
-                  element={
-                    <PageTransition>
-                      <CollectionsPage onProductClick={handleProductDetails} />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/collections/:slug"
-                  element={
-                    <PageTransition>
-                      <CollectionDetailPage onProductClick={handleProductDetails} />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/about"
-                  element={
-                    <PageTransition>
-                      <AboutPage />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/privacy-policy"
-                  element={
-                    <PageTransition>
-                      <PrivacyPolicy />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/terms-of-service"
-                  element={
-                    <PageTransition>
-                      <TermsOfService />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/director-login"
-                  element={
-                    <PageTransition>
-                      <DirectorLogin />
-                    </PageTransition>
-                  }
-                />
-                
-                {/* Customer Authentication & Dashboard Routes */}
-                <Route
-                  path="/register"
-                  element={
-                    <PageTransition>
-                      <Register />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/login"
-                  element={
-                    <PageTransition>
-                      <Login />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/verify-otp"
-                  element={
-                    <PageTransition>
-                      <VerifyOTP />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/forgot-password"
-                  element={
-                    <PageTransition>
-                      <ForgotPassword />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/verify-reset-otp"
-                  element={
-                    <PageTransition>
-                      <VerifyResetOTP />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/reset-password"
-                  element={
-                    <PageTransition>
-                      <ResetPassword />
-                    </PageTransition>
-                  }
-                />
-                <Route
-                  path="/account"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <AccountPage />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/account/orders"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <AccountPage />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/checkout"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <Checkout clearCartLocal={() => setCartItems([])} cartItems={cartItems} />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/order-success/:orderId"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <OrderSuccess />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/track-order/:orderId"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <TrackOrder />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/account/orders/:id"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <OrderDetails />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/account/exchanges"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <ExchangesPage />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/account/exchanges/:id"
-                  element={
-                    <CustomerProtectedRoute>
-                      <PageTransition>
-                        <ExchangeDetailsPage />
-                      </PageTransition>
-                    </CustomerProtectedRoute>
-                  }
-                />
-
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<Navigate to="overview" replace />} />
-                  <Route path="overview" element={<Overview />} />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="exchanges" element={<AdminExchanges />} />
-                  <Route path="inventory" element={<Inventory />} />
-                  <Route path="customers" element={<Customers />} />
-                  <Route path="analytics" element={<Analytics />} />
-                </Route>
-              </Routes>
-            </AnimatePresence>
-
-            {/* Footer (Only show on homepage) */}
-            {showNavbarAndFooter && (
-              <Footer
-                onNavigateToSection={handleNavigateToSection}
-                onDirectorClick={() => navigate('/director-login')}
-                onCartClick={() => setCartOpen(true)}
+              <SearchModal
+                isOpen={searchOpen}
+                onClose={() => setSearchOpen(false)}
+                onProductClick={handleProductDetails}
               />
-            )}
-          </div>
-        )}
-      </LenisProvider>
-    </AuthProvider>
+
+
+
+              {/* Main Routing Gateway */}
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route
+                    path="/"
+                    element={
+                      <PageTransition>
+                        <HomePage
+                          onAddToCart={handleAddToCart}
+                          onProductClick={handleProductDetails}
+                        />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/product/:slug"
+                    element={
+                      <PageTransition>
+                        <ProductDetailPage
+                          onAddToCart={handleAddToCart}
+                        />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/collections"
+                    element={
+                      <PageTransition>
+                        <CollectionsPage onProductClick={handleProductDetails} />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/collections/:slug"
+                    element={
+                      <PageTransition>
+                        <CollectionDetailPage onProductClick={handleProductDetails} />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/about"
+                    element={
+                      <PageTransition>
+                        <AboutPage />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/privacy-policy"
+                    element={
+                      <PageTransition>
+                        <PrivacyPolicy />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/terms-of-service"
+                    element={
+                      <PageTransition>
+                        <TermsOfService />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/director-login"
+                    element={
+                      <PageTransition>
+                        <DirectorLogin />
+                      </PageTransition>
+                    }
+                  />
+                  
+                  {/* Customer Authentication & Dashboard Routes */}
+                  <Route
+                    path="/register"
+                    element={
+                      <PageTransition>
+                        <Register />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/login"
+                    element={
+                      <PageTransition>
+                        <Login />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/verify-otp"
+                    element={
+                      <PageTransition>
+                        <VerifyOTP />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/forgot-password"
+                    element={
+                      <PageTransition>
+                        <ForgotPassword />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/verify-reset-otp"
+                    element={
+                      <PageTransition>
+                        <VerifyResetOTP />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/reset-password"
+                    element={
+                      <PageTransition>
+                        <ResetPassword />
+                      </PageTransition>
+                    }
+                  />
+                  <Route
+                    path="/account"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <AccountPage />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/orders"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <AccountPage />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/checkout"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <Checkout clearCartLocal={() => setCartItems([])} cartItems={cartItems} />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/order-success/:orderId"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <OrderSuccess />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/track-order/:orderId"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <TrackOrder />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/orders/:id"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <OrderDetails />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/exchanges"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <ExchangesPage />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/account/exchanges/:id"
+                    element={
+                      <CustomerProtectedRoute>
+                        <PageTransition>
+                          <ExchangeDetailsPage />
+                        </PageTransition>
+                      </CustomerProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route index element={<Navigate to="overview" replace />} />
+                    <Route path="overview" element={<Overview />} />
+                    <Route path="orders" element={<Orders />} />
+                    <Route path="exchanges" element={<AdminExchanges />} />
+                    <Route path="inventory" element={<Inventory />} />
+                    <Route path="customers" element={<Customers />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="coupons" element={<Coupons />} />
+                    <Route path="reviews" element={<Reviews />} />
+                  </Route>
+                </Routes>
+              </AnimatePresence>
+
+              {/* Footer (Only show on homepage) */}
+              {showNavbarAndFooter && (
+                <Footer
+                  onNavigateToSection={handleNavigateToSection}
+                  onDirectorClick={() => navigate('/director-login')}
+                  onCartClick={() => setCartOpen(true)}
+                />
+              )}
+            </div>
+          )}
+        </LenisProvider>
+      </AuthProvider>
   );
 };
 

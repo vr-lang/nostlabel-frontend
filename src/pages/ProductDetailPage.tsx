@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingBag, ChevronRight, Minus, Plus, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ChevronRight, Minus, Plus, AlertTriangle, ArrowLeft, Star, Trash2, Edit3, X } from 'lucide-react';
 import { productService } from '../services/productService';
 import type { Product } from '../data/products';
+import { useAuth } from '../context/AuthContext';
 
 interface ProductDetailPageProps {
   onAddToCart: (product: Product, size: 'S' | 'M' | 'L' | 'XL' | 'XXL', color: string, quantity: number) => void;
@@ -25,7 +26,7 @@ const FadeInImage: React.FC<{
         src={src}
         alt={alt}
         onLoad={() => setLoaded(true)}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${
+        className={`w-full h-full object-contain transition-opacity duration-300 ${
           loaded ? 'opacity-100' : 'opacity-0'
         } ${imgClassName}`}
         loading="lazy"
@@ -33,6 +34,57 @@ const FadeInImage: React.FC<{
     </div>
   );
 };
+
+const ZoomableImage: React.FC<{
+  src: string;
+  alt: string;
+  className?: string;
+}> = ({ src, alt, className = '' }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [zoomStyle, setZoomStyle] = useState<React.CSSProperties>({
+    transform: 'scale(1)',
+    transformOrigin: 'center center',
+  });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomStyle({
+      transform: 'scale(2.2)',
+      transformOrigin: `${x}% ${y}%`,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setZoomStyle({
+      transform: 'scale(1)',
+      transformOrigin: 'center center',
+    });
+  };
+
+  return (
+    <div
+      className={`relative w-full h-full overflow-hidden cursor-zoom-in ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {!loaded && (
+        <div className="absolute inset-0 bg-text-dark/5 animate-pulse rounded-sm" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setLoaded(true)}
+        className="w-full h-full object-contain transition-transform duration-150 ease-out"
+        style={zoomStyle}
+        loading="lazy"
+      />
+    </div>
+  );
+};
+
+
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCart }) => {
   const { slug } = useParams<{ slug: string }>();
@@ -50,14 +102,145 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [mobileImageIdx, setMobileImageIdx] = useState(0);
 
+  // Reviews state
+  const { user } = useAuth();
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviewStats, setReviewStats] = useState<any>({
+    averageRating: 0,
+    reviewCount: 0,
+    breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  });
+  const [canReview, setCanReview] = useState(false);
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  const fetchReviews = async (productId: string) => {
+    try {
+      const data = await productService.getProductReviews(productId);
+      if (data) {
+        setReviews(data.reviews || []);
+        setReviewStats(data.stats || {
+          averageRating: 0,
+          reviewCount: 0,
+          breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+        });
+      }
+    } catch (err) {
+      console.error('Failed to load reviews:', err);
+    }
+  };
+
+  const checkUserCanReview = async (productId: string) => {
+    try {
+      const isEligible = await productService.checkCanReview(productId);
+      setCanReview(isEligible);
+    } catch (err) {
+      console.error('Failed to check review status:', err);
+      setCanReview(false);
+    }
+  };
+
+  useEffect(() => {
+    if (product?.id) {
+      fetchReviews(product.id);
+      if (user) {
+        checkUserCanReview(product.id);
+      }
+    }
+  }, [product, user]);
+
+  const handleOpenWriteReview = () => {
+    const existing = reviews.find(r => {
+      const reviewerId = r.user?._id || r.user;
+      return reviewerId === user?.id;
+    });
+    if (existing) {
+      setEditingReviewId(existing._id);
+      setReviewRating(existing.rating);
+      setReviewComment(existing.comment);
+    } else {
+      setEditingReviewId(null);
+      setReviewRating(5);
+      setReviewComment('');
+    }
+    setReviewFormOpen(true);
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!product || submittingReview) return;
+    setSubmittingReview(true);
+    try {
+      if (editingReviewId) {
+        await productService.updateReview(editingReviewId, {
+          rating: reviewRating,
+          comment: reviewComment
+        });
+      } else {
+        await productService.addReview({
+          product: product.id,
+          rating: reviewRating,
+          comment: reviewComment
+        });
+      }
+      setReviewFormOpen(false);
+      if (product?.id) {
+        fetchReviews(product.id);
+        checkUserCanReview(product.id);
+      }
+    } catch (err: any) {
+      alert(err.message || 'Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!window.confirm('Are you sure you want to delete this review?')) return;
+    try {
+      await productService.deleteReview(reviewId);
+      if (product) {
+        fetchReviews(product.id);
+        checkUserCanReview(product.id);
+      }
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete review');
+    }
+  };
+
+  const renderStars = (rating: number, size = 12, interactive = false, onSelect?: (r: number) => void) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          size={size}
+          className={`${
+            i <= rating 
+              ? 'text-accent-gold fill-accent-gold' 
+              : 'text-text-dark/15'
+          } ${interactive ? 'cursor-pointer hover:scale-110 transition-transform' : ''}`}
+          onClick={() => interactive && onSelect && onSelect(i)}
+        />
+      );
+    }
+    return <div className="flex space-x-0.5">{stars}</div>;
+  };
+
   // 1. Fetch Product Data
   useEffect(() => {
+    let active = true;
     const fetchProductData = async () => {
       if (!slug) return;
       setLoading(true);
       setError(null);
       try {
         const prod = await productService.getProductBySlug(slug);
+        if (!active) return;
+
         if (prod) {
           setProduct(prod);
           // Set initial selectors
@@ -94,13 +277,20 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
         }
       } catch (err: any) {
         console.error(err);
-        setError('Network Error');
+        if (active) {
+          setError('Network Error');
+        }
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     };
 
     fetchProductData();
+    return () => {
+      active = false;
+    };
   }, [slug]);
 
   // 2. Fetch Related Products
@@ -196,7 +386,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
     if (!product) return [];
     const baseSpecs = [
       { name: 'FABRIC', value: product.material || '100% Cotton' },
-      { name: 'WEIGHT', value: product.gsm || '280 GSM' },
+      { name: 'WEIGHT', value: product.gsm || '220 GSM' },
       { name: 'FIT', value: product.name.toLowerCase().includes('oversized') ? 'Oversized Silhouette with Drop Shoulder Fit' : 'Relaxed Standard Fit' },
       { name: 'STITCH', value: 'Double-needle cover stitch collar & hems' },
       { name: 'FINISH', value: 'Acid wash soft-silicone pre-shrunk finish' },
@@ -208,7 +398,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
   }, [product]);
 
   // 5. Loading Skeleton Elements
-  if (loading) {
+  const isPageLoading = loading;
+  if (isPageLoading) {
     return (
       <div className="min-h-screen bg-bg-cream-1 pt-32 pb-24 px-6 md:px-12 xl:px-24">
         {/* Breadcrumb Skeleton */}
@@ -284,7 +475,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
           <div className="hidden md:flex flex-col space-y-4">
             {/* Active Large Hero Image */}
             <div className="aspect-[3/4] w-full bg-bg-cream-2 border border-black/5 overflow-hidden relative rounded-sm">
-              <FadeInImage
+              <ZoomableImage
                 key={activeImageIdx}
                 src={product.images[activeImageIdx] || product.images[0]}
                 alt={product.name}
@@ -564,6 +755,219 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
           </div>
         </div>
       </motion.section>
+
+      {/* REVIEWS SYSTEM SECTION */}
+      <motion.section
+        initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.5, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="max-w-7xl mx-auto mt-24 pt-16 border-t border-text-dark/10 text-left"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Stats Summary Panel */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="space-y-3">
+              <span className="text-[10px] tracking-[0.3em] font-mono text-accent-gold uppercase font-bold">
+                CUSTOMER FEEDBACK
+              </span>
+              <h2 className="font-display text-2xl md:text-3.5xl uppercase text-text-dark leading-none tracking-wide">
+                CLOTHING SENTIMENTS
+              </h2>
+            </div>
+
+            <div className="border border-text-dark/10 p-6 bg-bg-cream-2 rounded-sm space-y-4">
+              <div className="flex items-baseline space-x-2">
+                <span className="text-4xl font-mono font-bold text-text-dark">
+                  {reviewStats.averageRating.toFixed(1)}
+                </span>
+                <span className="text-xs text-text-dark/40 font-mono">/ 5.0</span>
+              </div>
+
+              <div className="space-y-1">
+                {renderStars(Math.round(reviewStats.averageRating), 14)}
+                <span className="text-[10px] text-text-dark/50 font-mono block">
+                  Based on {reviewStats.reviewCount} customer reviews
+                </span>
+              </div>
+
+              {/* Star Breakdown bars */}
+              <div className="space-y-2 pt-2 border-t border-text-dark/5">
+                {([5, 4, 3, 2, 1] as const).map((stars) => {
+                  const count = reviewStats.breakdown[stars] || 0;
+                  const percentage = reviewStats.reviewCount > 0 
+                    ? (count / reviewStats.reviewCount) * 100 
+                    : 0;
+
+                  return (
+                    <div key={stars} className="flex items-center space-x-3 text-[10px] font-mono">
+                      <span className="w-3 text-text-dark/60 text-right">{stars}★</span>
+                      <div className="flex-grow h-1 bg-text-dark/5 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-accent-gold transition-all duration-500" 
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <span className="w-6 text-text-dark/40 text-left">({count})</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Write a review trigger */}
+            {canReview && (
+              <button
+                onClick={handleOpenWriteReview}
+                className="w-full bg-transparent text-text-dark border border-text-dark text-[10px] uppercase font-bold tracking-[0.2em] py-3.5 hover:bg-text-dark hover:text-white transition-all duration-300 rounded-sm font-display cursor-pointer"
+              >
+                {reviews.some(r => {
+                  const reviewerId = r.user?._id || r.user;
+                  return reviewerId === user?.id;
+                }) ? 'Edit Your Review' : 'Write a Review'}
+              </button>
+            )}
+          </div>
+
+          {/* Reviews List Panel */}
+          <div className="lg:col-span-8 space-y-6">
+            <h3 className="text-[10px] tracking-widest font-mono text-text-dark/40 uppercase font-bold">
+              Sentiments Archive ({reviews.length})
+            </h3>
+
+            {reviews.length === 0 ? (
+              <div className="border border-text-dark/5 p-12 text-center text-text-dark/40 font-mono text-xs bg-bg-cream-2 rounded-sm">
+                No active reviews for this garment yet.
+              </div>
+            ) : (
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 dark-theme-scrollbar">
+                {reviews.map((review) => {
+                  const reviewerId = review.user?._id || review.user;
+                  const isAuthor = user && reviewerId === user.id;
+
+                  return (
+                    <div 
+                      key={review._id} 
+                      className="border border-text-dark/10 p-6 bg-bg-cream-2 rounded-sm space-y-3 relative group"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <span className="text-[11px] font-bold text-text-dark uppercase tracking-wider block">
+                            {review.user?.name || 'Verified Purchaser'}
+                          </span>
+                          <span className="text-[9px] text-text-dark/40 font-mono block">
+                            {new Date(review.createdAt).toLocaleDateString(undefined, {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </span>
+                        </div>
+                        {renderStars(review.rating, 10)}
+                      </div>
+
+                      <p className="text-xs md:text-sm text-text-dark/80 font-light leading-relaxed">
+                        "{review.comment}"
+                      </p>
+
+                      {/* Author moderation actions */}
+                      {isAuthor && (
+                        <div className="flex space-x-3 pt-2 border-t border-text-dark/5 text-[9px] font-mono">
+                          <button
+                            onClick={handleOpenWriteReview}
+                            className="flex items-center space-x-1 text-text-dark/60 hover:text-text-dark transition-colors cursor-pointer"
+                          >
+                            <Edit3 size={10} />
+                            <span>EDIT</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteReview(review._id)}
+                            className="flex items-center space-x-1 text-red-500/70 hover:text-red-500 transition-colors cursor-pointer"
+                          >
+                            <Trash2 size={10} />
+                            <span>DELETE</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* REVIEW FORM DIALOG OVERLAY */}
+      {reviewFormOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs px-6">
+          <div 
+            className="w-full max-w-md bg-bg-cream-1 border border-text-dark/10 p-8 flex flex-col justify-between shadow-2xl relative rounded-sm text-text-dark"
+          >
+            <div className="space-y-6">
+              <div className="flex justify-between items-center border-b border-text-dark/5 pb-4">
+                <div className="space-y-1">
+                  <span className="text-[9px] font-mono tracking-[0.2em] text-accent-gold uppercase font-bold block">
+                    {editingReviewId ? 'REVISE SENTIMENT' : 'SHARE SENTIMENT'}
+                  </span>
+                  <h3 className="font-display text-lg uppercase tracking-wider text-text-dark">
+                    Review {product.name}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setReviewFormOpen(false)}
+                  className="p-1 hover:bg-black/5 rounded-full cursor-pointer text-text-dark/40 hover:text-text-dark transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleReviewSubmit} className="space-y-5">
+                {/* Stars selection */}
+                <div className="space-y-2">
+                  <label className="text-[10px] tracking-widest font-mono text-text-dark/40 uppercase block">
+                    Your Rating*
+                  </label>
+                  <div className="flex space-x-1.5 py-1">
+                    {renderStars(reviewRating, 24, true, (rating) => setReviewRating(rating))}
+                  </div>
+                </div>
+
+                {/* Comment */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] tracking-widest font-mono text-text-dark/40 uppercase block">
+                    Your Comments*
+                  </label>
+                  <textarea
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    className="w-full h-32 bg-bg-cream-2 border border-text-dark/10 rounded-sm p-4 font-body text-xs text-text-dark placeholder-text-dark/30 focus:outline-none focus:border-text-dark/30 transition-all resize-none"
+                    placeholder="Tell us about the drape, heavy knitting weight, silhouette fit, and construction quality..."
+                    maxLength={1000}
+                    required
+                  />
+                </div>
+              </form>
+            </div>
+
+            <div className="flex space-x-4 border-t border-text-dark/5 pt-6 mt-8">
+              <button
+                type="button"
+                onClick={() => setReviewFormOpen(false)}
+                className="w-1/2 border border-text-dark/15 text-text-dark text-[10px] uppercase font-bold tracking-[0.2em] py-3.5 rounded-sm hover:bg-black/5 transition-all duration-300 cursor-pointer font-display"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReviewSubmit}
+                disabled={submittingReview}
+                className="w-1/2 bg-text-dark text-white text-[10px] uppercase font-bold tracking-[0.2em] py-3.5 rounded-sm hover:bg-transparent hover:text-text-dark border border-text-dark transition-all duration-300 cursor-pointer font-display disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {submittingReview ? 'Publishing...' : 'Publish'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* RELATED PRODUCTS SECTION */}
       {relatedProducts.length > 0 && (

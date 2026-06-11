@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_BASE = 'https://nostlabel-backend.onrender.com/api';
+import { API_BASE_URL as API_BASE } from '../config/api';
 
 const AUTH_EXCLUDED_ROUTES = [
   '/auth/login',
@@ -18,7 +17,7 @@ const AUTH_EXCLUDED_ROUTES = [
 // Create a custom axios instance for auth and general requests
 export const apiClient = axios.create({
   baseURL: API_BASE,
-
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -342,10 +341,6 @@ export const authService = {
 // Axios Response Interceptor to catch token expiry and refresh automatically
 apiClient.interceptors.response.use(
   (response) => {
-    // Network Debugging: log successful responses
-    const url = response.config?.url || '';
-    const status = response.status;
-    console.log(`[HTTP-DEBUG] Request URL: ${url} | Status: ${status}`);
     return response;
   },
   async (error) => {
@@ -353,16 +348,12 @@ apiClient.interceptors.response.use(
     const url = originalRequest?.url || '';
     const status = error.response?.status;
     
-    // Network Debugging: log error responses
-    console.log(`[HTTP-DEBUG] Request URL: ${url} | Status: ${status || 'Network Error'}`);
-
     // Check if route is excluded from refresh triggers
     const isExcluded = AUTH_EXCLUDED_ROUTES.some((route) => url.includes(route));
     const tokenExists = !!localStorage.getItem('nostlabel_admin_token');
 
     if (status === 401 && !isExcluded && tokenExists && !originalRequest._retry) {
       originalRequest._retry = true;
-      console.log(`[HTTP-DEBUG] Refresh Triggered for URL: ${url}`);
       try {
         const newToken = await authService.refresh();
         if (newToken) {
