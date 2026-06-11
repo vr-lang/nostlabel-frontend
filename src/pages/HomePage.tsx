@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Hero from '../sections/Hero';
 import Manifesto from '../sections/Manifesto';
 import ScrollStory from '../sections/ScrollStory';
 import SplitCraft from '../sections/SplitCraft';
@@ -100,18 +99,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onProductClick 
           isFirstSection={true}
         />
       )}
-      <Hero
+      <BestSellers 
+        onProductClick={onProductClick} 
+        onAddToCart={onAddToCart} 
         isFirstSection={!showOffer}
-        onShopClick={() => handleNavigateToSection('bestsellers')}
-        onExploreClick={() => handleNavigateToSection('manifesto')}
-        onAddToCart={onAddToCart}
       />
+      <FeaturedCollection onCategoryClick={() => handleNavigateToSection('bestsellers')} />
       <Manifesto />
       <ScrollStory />
       <SplitCraft onLearnMoreClick={() => handleNavigateToSection('why-nostlabel')} />
       <PinnedWords />
-      <FeaturedCollection onCategoryClick={() => handleNavigateToSection('bestsellers')} />
-      <BestSellers onProductClick={onProductClick} onAddToCart={onAddToCart} />
       <WhyNostlabel />
       <BrandStory />
     </>

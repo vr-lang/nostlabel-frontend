@@ -25,7 +25,12 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
   const products = offer.products || [];
 
   const handleCtaClick = () => {
-    navigate(offer.ctaLink || '/collections/t-shirts');
+    const targetLink = offer.ctaLink || '/collections/oversized-t-shirts';
+    if (targetLink.startsWith('http')) {
+      window.location.href = targetLink;
+    } else {
+      navigate(targetLink);
+    }
   };
 
   const handleProductClick = (slug: string) => {
@@ -85,9 +90,9 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
       </div>
 
       {/* Core Typography Layout */}
-      <div className="w-full max-w-4xl flex flex-col items-center text-center space-y-4 md:space-y-6 lg:space-y-8 z-10 my-4 shrink-0">
+      <div className="w-full max-w-4xl flex flex-col items-center text-center z-10 my-4 shrink-0">
         {/* LIMITED TIME OFFER */}
-        <div className="flex items-center space-x-2 py-1 border-b border-accent-gold/10 px-4">
+        <div className="flex items-center space-x-2 py-1.5 border-b border-accent-gold/10 px-4 mb-4 md:mb-6">
           <Sparkles size={10} className="text-accent-gold animate-pulse" />
           <span className="text-[10px] md:text-xs tracking-[0.35em] font-mono font-bold text-accent-gold uppercase block">
             {offer.subtitle || 'LIMITED TIME OFFER'}
@@ -95,20 +100,22 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
         </div>
 
         {/* ANY 2 T-SHIRTS */}
-        <h2 className="font-display text-[32px] sm:text-[48px] md:text-[64px] xl:text-[80px] leading-[1.05] text-white uppercase tracking-[0.05em] font-black max-w-2xl">
+        <h2 className="font-display text-[32px] sm:text-[48px] md:text-[64px] xl:text-[80px] leading-[1.05] text-white uppercase tracking-[0.05em] font-black max-w-2xl mb-6 md:mb-8">
           ANY 2 T-SHIRTS
         </h2>
 
-        {/* FOR ₹1400 */}
-        <div className="flex flex-col items-center justify-center space-y-2 md:space-y-3.5">
-          <span className="font-serif italic text-xs sm:text-sm md:text-base text-white/40 uppercase tracking-[0.25em] block">FOR</span>
-          <span className="font-display text-[58px] sm:text-[80px] md:text-[104px] xl:text-[124px] leading-[0.95] text-accent-gold font-black tracking-tighter drop-shadow-[0_15px_30px_rgba(197,160,89,0.15)] block">
-            ₹{offer.price || '1400'}
-          </span>
-        </div>
+        {/* FOR */}
+        <span className="font-serif italic text-xs sm:text-sm md:text-base text-white/40 uppercase tracking-[0.35em] block mb-3.5 md:mb-6">
+          FOR
+        </span>
+
+        {/* ₹1400 */}
+        <span className="font-display text-[64px] sm:text-[88px] md:text-[116px] xl:text-[138px] leading-[0.95] text-accent-gold font-black tracking-tighter drop-shadow-[0_15px_30px_rgba(197,160,89,0.15)] block mb-6 md:mb-8">
+          ₹{offer.price || '1400'}
+        </span>
 
         {/* PREMIUM OVERSIZED TEES */}
-        <p className="text-[10px] sm:text-[11px] md:text-xs font-mono tracking-[0.4em] text-white/50 uppercase max-w-md mt-2 md:mt-4">
+        <p className="text-[10px] sm:text-[11px] md:text-xs font-mono tracking-[0.4em] text-white/50 uppercase max-w-md">
           {offer.description || 'PREMIUM OVERSIZED TEES'}
         </p>
       </div>

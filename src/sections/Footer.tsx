@@ -180,11 +180,11 @@ export const Footer: React.FC<FooterProps> = ({
             </span>
             <div className="flex space-x-3.5">
               <a
-                href="https://instagram.com/nostlabel"
+                href="https://www.instagram.com/nostfit?igsh=ZmYwbm1tMGdqcGx5"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/60 hover:text-accent-gold hover:scale-110 transition-all duration-300 p-2 border border-white/10 hover:border-accent-gold/40 rounded-full flex items-center justify-center"
-                aria-label="Instagram Profile"
+                aria-label="Instagram"
               >
                 {/* Lucide Instagram Path SVG */}
                 <svg
@@ -228,11 +228,11 @@ export const Footer: React.FC<FooterProps> = ({
                 </svg>
               </a>
               <a
-                href="https://wa.me/919999999999"
+                href="https://wa.me/919729051506"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/60 hover:text-accent-gold hover:scale-110 transition-all duration-300 p-2 border border-white/10 hover:border-accent-gold/40 rounded-full flex items-center justify-center"
-                aria-label="WhatsApp Link"
+                aria-label="WhatsApp"
               >
                 {/* Lucide Message Circle SVG */}
                 <svg

@@ -8,6 +8,7 @@ const NOSTLABEL_PLACEHOLDER = "/logo.png";
 interface BestSellersProps {
   onProductClick: (product: Product) => void;
   onAddToCart: (product: Product, size: 'S' | 'M' | 'L' | 'XL' | 'XXL', color: string) => void;
+  isFirstSection?: boolean;
 }
 
 const BestSellersSkeleton: React.FC = () => (
@@ -28,7 +29,10 @@ const BestSellersSkeleton: React.FC = () => (
   </div>
 );
 
-export const BestSellers: React.FC<BestSellersProps> = ({ onProductClick }) => {
+export const BestSellers: React.FC<BestSellersProps> = ({ 
+  onProductClick, 
+  isFirstSection = false 
+}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -78,7 +82,14 @@ export const BestSellers: React.FC<BestSellersProps> = ({ onProductClick }) => {
   };
 
   return (
-    <section className="bg-bg-cream-2 py-14 md:py-20 lg:py-24 px-6 md:px-12 xl:px-24 z-10 relative" id="bestsellers">
+    <section 
+      className="bg-bg-cream-2 px-6 md:px-12 xl:px-24 z-10 relative" 
+      style={{
+        paddingTop: isFirstSection ? 'calc(var(--header-height, 80px) + 3.5rem)' : '5rem',
+        paddingBottom: '5rem',
+      }}
+      id="bestsellers"
+    >
       <div className="max-w-7xl mx-auto space-y-12">
         
         {/* Title */}
