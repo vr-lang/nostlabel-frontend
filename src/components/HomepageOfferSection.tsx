@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import type { Product } from '../data/products';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface HomepageOfferSectionProps {
   offer: {
@@ -39,22 +40,24 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
 
   // Safe image URL resolver
   const getProductImageUrl = (product: any) => {
-    if (!product) return '/logo.png';
-    if (typeof product.images === 'string') return product.images;
-    if (Array.isArray(product.images) && product.images.length > 0) {
-      const img = product.images[0];
-      if (!img) return '/logo.png';
-      if (typeof img === 'string') return img;
-      if (typeof img === 'object') {
-        if (img.url) return img.url;
-        if (img.secure_url) return img.secure_url;
+    let resolvedUrl = '/logo.png';
+    if (product) {
+      if (typeof product.images === 'string') {
+        resolvedUrl = product.images;
+      } else if (Array.isArray(product.images) && product.images.length > 0) {
+        const img = product.images[0];
+        if (img) {
+          if (typeof img === 'string') resolvedUrl = img;
+          else if (typeof img === 'object') {
+            resolvedUrl = img.url || img.secure_url || '/logo.png';
+          }
+        }
+      } else if (product.image) {
+        if (typeof product.image === 'string') resolvedUrl = product.image;
+        else if (typeof product.image === 'object' && product.image.url) resolvedUrl = product.image.url;
       }
     }
-    if (product.image) {
-      if (typeof product.image === 'string') return product.image;
-      if (typeof product.image === 'object' && product.image.url) return product.image.url;
-    }
-    return '/logo.png';
+    return getOptimizedImageUrl(resolvedUrl, 800);
   };
 
   // Luxury benefits list

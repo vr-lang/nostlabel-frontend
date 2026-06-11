@@ -8,6 +8,23 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('recharts')) {
+              return 'recharts-vendor';
+            }
+            if (id.includes('gsap') || id.includes('framer-motion') || id.includes('lenis')) {
+              return 'animation-vendor';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
+  },
   server: {
     port: 3001,
     proxy: {

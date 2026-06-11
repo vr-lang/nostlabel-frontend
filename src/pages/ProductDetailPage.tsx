@@ -5,6 +5,7 @@ import { ShoppingBag, ChevronRight, Minus, Plus, AlertTriangle, ArrowLeft, Star,
 import { productService } from '../services/productService';
 import type { Product } from '../data/products';
 import { useAuth } from '../context/AuthContext';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface ProductDetailPageProps {
   onAddToCart: (product: Product, size: 'S' | 'M' | 'L' | 'XL' | 'XXL', color: string, quantity: number) => void;
@@ -488,7 +489,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             <div className="aspect-[3/4] w-full bg-bg-cream-2 border border-black/5 overflow-hidden relative rounded-sm">
               <ZoomableImage
                 key={activeImageIdx}
-                src={product.images[activeImageIdx] || product.images[0]}
+                src={getOptimizedImageUrl(product.images[activeImageIdx] || product.images[0], 1200)}
                 alt={product.name}
               />
             </div>
@@ -498,13 +499,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
               <div className="grid grid-cols-2 gap-4">
                 <div className="aspect-[3/4] bg-bg-cream-2 border border-black/5 overflow-hidden rounded-sm">
                   <FadeInImage
-                    src={product.images[1]}
+                    src={getOptimizedImageUrl(product.images[1], 800)}
                     alt={`${product.name} supporting image`}
                   />
                 </div>
                 <div className="aspect-[3/4] bg-bg-cream-2 border border-black/5 overflow-hidden rounded-sm">
                   <FadeInImage
-                    src={product.images[2] || product.images[0]}
+                    src={getOptimizedImageUrl(product.images[2] || product.images[0], 800)}
                     alt={`${product.name} supporting image`}
                   />
                 </div>
@@ -524,7 +525,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
                         activeImageIdx === absoluteIdx ? 'border-accent-gold scale-[1.03]' : 'border-black/5 hover:border-black/30'
                       }`}
                     >
-                      <FadeInImage src={img} alt="" />
+                      <FadeInImage src={getOptimizedImageUrl(img, 150)} alt="" />
                     </button>
                   );
                 })}
@@ -550,7 +551,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
                 {product.images.map((img, idx) => (
                   <div key={idx} className="min-w-full h-full snap-start snap-always translate-z-0 backface-hidden will-change-transform">
                     <FadeInImage
-                      src={img}
+                      src={getOptimizedImageUrl(img, 800)}
                       alt={`${product.name} - slide ${idx + 1}`}
                     />
                   </div>
@@ -1018,7 +1019,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
               >
                 <div className="aspect-[3/4] w-full bg-bg-cream-2 border border-black/5 overflow-hidden relative rounded-sm">
                   <FadeInImage
-                    src={p.images[0]}
+                    src={getOptimizedImageUrl(p.images[0], 600)}
                     alt={p.name}
                     imgClassName="transition-transform duration-700 group-hover:scale-105"
                   />

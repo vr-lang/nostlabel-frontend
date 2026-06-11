@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { X, Search } from 'lucide-react';
 import { productService } from '../services/productService';
 import type { Product } from '../data/products';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -143,7 +144,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onPro
                 >
                   <div className="aspect-[3/4] w-full bg-white/5 overflow-hidden border border-white/5 relative">
                     <img
-                      src={product.images[0]}
+                      src={getOptimizedImageUrl(product.images[0], 150)}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 filter grayscale-[40%] group-hover:grayscale-0"
                       loading="lazy"

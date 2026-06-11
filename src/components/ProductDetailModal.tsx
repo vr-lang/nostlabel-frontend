@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingBag } from 'lucide-react';
 import type { Product } from '../data/products';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -53,7 +54,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <div className="md:col-span-6 flex flex-col space-y-4">
           <div className="aspect-[3/4] w-full bg-[#F2ECE4] border border-black/5 overflow-hidden relative">
             <img
-              src={product.images[activeImageIdx] || product.images[0]}
+              src={getOptimizedImageUrl(product.images[activeImageIdx] || product.images[0], 800)}
               alt={product.name}
               className="w-full h-full object-cover"
             />
@@ -70,7 +71,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     activeImageIdx === idx ? 'border-accent-gold' : 'border-black/5'
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={getOptimizedImageUrl(img, 150)} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

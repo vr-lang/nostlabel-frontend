@@ -3,6 +3,7 @@ import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import type { Product } from '../data/products';
 import { getActiveOffers, calculateOfferDiscount } from '../utils/offerHelper';
 import type { Offer } from '../utils/offerHelper';
+import { getOptimizedImageUrl } from '../utils/image';
 
 export interface CartItem {
   product: Product;
@@ -110,7 +111,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 {/* Product Thumbnail */}
                 <div className="w-20 aspect-[3/4] bg-[#F2ECE4] border border-black/5 overflow-hidden shrink-0">
                   <img
-                    src={item.product.images[0]}
+                    src={getOptimizedImageUrl(item.product.images[0], 150)}
                     alt={item.product.name}
                     className="w-full h-full object-cover"
                   />

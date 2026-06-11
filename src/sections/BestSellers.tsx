@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { type Product } from '../data/products';
 import { productService } from '../services/productService';
+import { getOptimizedImageUrl } from '../utils/image';
 
 const NOSTLABEL_PLACEHOLDER = "/logo.png";
 
@@ -129,7 +130,7 @@ export const BestSellers: React.FC<BestSellersProps> = ({
                   {/* Image Container */}
                   <div className="aspect-[3/4] w-full bg-[#F2ECE4] overflow-hidden border border-text-dark/5 relative shadow-sm transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-lg group-hover:border-accent-gold/20">
                     <img
-                      src={product.images[0] || NOSTLABEL_PLACEHOLDER}
+                      src={getOptimizedImageUrl(product.images[0] || NOSTLABEL_PLACEHOLDER, 600)}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter grayscale-[20%] group-hover:grayscale-0"
                       loading="lazy"
