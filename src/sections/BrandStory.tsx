@@ -5,7 +5,7 @@ import { productService } from '../services/productService';
 export const BrandStory: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.15 });
-  const [imageUrl, setImageUrl] = useState("/logo.png");
+  const [imageUrl, setImageUrl] = useState("https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1000&auto=format&fit=crop");
 
   useEffect(() => {
     let active = true;
@@ -16,7 +16,7 @@ export const BrandStory: React.FC = () => {
         const featured = products.find(p => p.featured && p.images && p.images.length > 0);
         const latest = products.find(p => p.images && p.images.length > 0);
         const targetProduct = featured || latest;
-        if (targetProduct && targetProduct.images[0]) {
+        if (targetProduct && targetProduct.images[0] && targetProduct.images[0] !== '/logo.png') {
           setImageUrl(targetProduct.images[0]);
         }
       } catch (err) {
@@ -112,11 +112,11 @@ export const BrandStory: React.FC = () => {
           initial="hidden"
           animate={inView ? "show" : "hidden"}
           variants={containerVariants}
-          className="lg:col-span-6 flex justify-center w-full"
+          className="lg:col-span-6 flex justify-center w-full mt-8 lg:mt-0"
         >
           <motion.div
             variants={imageVariants}
-            className="aspect-[3/4] w-full max-w-md md:max-w-xl lg:max-w-none lg:w-full overflow-hidden bg-white/5 border border-white/10 shadow-2xl relative group rounded-sm"
+            className="aspect-[3/4] w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-none lg:w-full overflow-hidden bg-white/5 border border-white/10 shadow-2xl relative group rounded-sm"
           >
             {/* Background Campaign Image with slight zoom */}
             <motion.div

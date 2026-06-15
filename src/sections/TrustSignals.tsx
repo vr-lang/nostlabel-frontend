@@ -50,11 +50,11 @@ export const TrustSignals: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 w-full">
           {signals.map((item, idx) => (
             <div
               key={idx}
-              className="group flex flex-col space-y-4 border-l border-text-dark/10 pl-6 hover:border-accent-gold transition-colors duration-300"
+              className="group flex flex-col space-y-4 border-l border-text-dark/10 pl-6 hover:border-accent-gold transition-colors duration-300 w-full min-w-0"
             >
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xs bg-bg-cream-2 border border-text-dark/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -67,7 +67,7 @@ export const TrustSignals: React.FC = () => {
               <h3 className="font-display text-lg uppercase text-text-dark tracking-wide group-hover:text-accent-gold transition-colors duration-300">
                 {item.title}
               </h3>
-              <p className="text-xs text-text-dark/65 font-light leading-relaxed max-w-sm">
+              <p className="text-xs text-text-dark/65 font-light leading-relaxed w-full max-w-none">
                 {item.desc}
               </p>
             </div>
