@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import FeaturedCollection from '../sections/FeaturedCollection';
 import BestSellers from '../sections/BestSellers';
 import BrandStory from '../sections/BrandStory';
-import Testimonials from '../sections/Testimonials';
+import TrustSignals from '../sections/TrustSignals';
 import type { Product } from '../data/products';
 import HomepageOfferSection from '../components/HomepageOfferSection';
 import { API_BASE_URL } from '../config/api';
@@ -101,7 +101,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onProductClick 
         isFirstSection={!showOffer}
       />
       <FeaturedCollection onCategoryClick={() => handleNavigateToSection('bestsellers')} />
-      <Testimonials />
+      <TrustSignals />
       <BrandStory />
     </>
   );

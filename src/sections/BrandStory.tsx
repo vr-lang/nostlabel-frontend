@@ -73,7 +73,7 @@ export const BrandStory: React.FC = () => {
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "show" : "hidden"}
-          className="lg:col-span-7 flex flex-col text-left space-y-6 md:space-y-8"
+          className="lg:col-span-6 flex flex-col text-left space-y-6 md:space-y-8"
         >
           {/* 1. Small label appears */}
           <motion.div variants={itemVariants} className="flex items-center space-x-3 opacity-60">
@@ -112,11 +112,11 @@ export const BrandStory: React.FC = () => {
           initial="hidden"
           animate={inView ? "show" : "hidden"}
           variants={containerVariants}
-          className="lg:col-span-5 flex justify-center w-full"
+          className="lg:col-span-6 flex justify-center w-full"
         >
           <motion.div
             variants={imageVariants}
-            className="aspect-[3/4] w-full max-w-sm overflow-hidden bg-white/5 border border-white/10 shadow-2xl relative group rounded-sm"
+            className="aspect-[3/4] w-full max-w-md md:max-w-xl lg:max-w-none lg:w-full overflow-hidden bg-white/5 border border-white/10 shadow-2xl relative group rounded-sm"
           >
             {/* Background Campaign Image with slight zoom */}
             <motion.div
