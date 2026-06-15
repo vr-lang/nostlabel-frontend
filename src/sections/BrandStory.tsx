@@ -1,33 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { productService } from '../services/productService';
 
 export const BrandStory: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.15 });
-  const [imageUrl, setImageUrl] = useState("https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1000&auto=format&fit=crop");
-
-  useEffect(() => {
-    let active = true;
-    const fetchImage = async () => {
-      try {
-        const products = await productService.getAllProducts();
-        if (!active) return;
-        const featured = products.find(p => p.featured && p.images && p.images.length > 0);
-        const latest = products.find(p => p.images && p.images.length > 0);
-        const targetProduct = featured || latest;
-        if (targetProduct && targetProduct.images[0] && targetProduct.images[0] !== '/logo.png') {
-          setImageUrl(targetProduct.images[0]);
-        }
-      } catch (err) {
-        console.error("Failed to load product image for studio mission:", err);
-      }
-    };
-    fetchImage();
-    return () => {
-      active = false;
-    };
-  }, []);
+  const imageUrl = "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1000&auto=format&fit=crop";
 
   const containerVariants = {
     hidden: {},
@@ -61,19 +38,17 @@ export const BrandStory: React.FC = () => {
     return (
       <motion.div
         variants={imageVariants}
-        className={`aspect-[3/4] w-full overflow-hidden bg-white/5 border border-white/10 shadow-2xl relative group rounded-sm ${
+        className={`aspect-[3/4] w-full overflow-hidden bg-[#0D0D0D] border border-white/10 shadow-2xl relative group rounded-sm ${
           isMobile 
             ? "max-w-sm sm:max-w-lg md:max-w-xl my-6 mx-auto" 
             : "lg:max-w-none lg:w-full"
         }`}
       >
-        {/* Background Campaign Image with slight zoom */}
-        <motion.div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${imageUrl})`,
-            filter: 'grayscale(100%) brightness(55%)',
-          }}
+        {/* Support Lookbook Campaign Image */}
+        <motion.img
+          src={imageUrl}
+          alt="NOSTLABEL Studio Mission Campaign Lookbook"
+          className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 brightness-[55%] transition-transform duration-700 ease-out group-hover:scale-105"
           whileHover={{ scale: 1.04 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         />
