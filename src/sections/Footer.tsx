@@ -26,10 +26,10 @@ export const Footer: React.FC<FooterProps> = ({
         </h4>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 grid grid-cols-2 md:grid-cols-5 gap-12 text-left mb-20">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-x-8 gap-y-12 md:gap-12 text-left mb-20">
         
         {/* Col 1: Brand Info */}
-        <div className="space-y-4 col-span-2 md:col-span-2">
+        <div className="space-y-4 col-span-1 sm:col-span-2 md:col-span-2">
           <img
             src="/logo.png"
             alt="Nost Label"

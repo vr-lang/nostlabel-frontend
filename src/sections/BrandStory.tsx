@@ -4,7 +4,6 @@ import { motion, useInView } from 'framer-motion';
 export const BrandStory: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.15 });
-  const imageUrl = "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1000&auto=format&fit=crop";
 
   const containerVariants = {
     hidden: {},
@@ -25,45 +24,6 @@ export const BrandStory: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' as const } }
   };
 
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.96 },
-    show: { 
-      opacity: 1, 
-      scale: 1, 
-      transition: { duration: 1.2, ease: [0.25, 0.1, 0.25, 1.0] as const } 
-    }
-  };
-
-  const renderImageCard = (isMobile: boolean) => {
-    return (
-      <motion.div
-        variants={imageVariants}
-        className={`aspect-[3/4] w-full overflow-hidden bg-[#0D0D0D] border border-white/10 shadow-2xl relative group rounded-sm ${
-          isMobile 
-            ? "max-w-sm sm:max-w-lg md:max-w-xl my-6 mx-auto" 
-            : "lg:max-w-none lg:w-full"
-        }`}
-      >
-        {/* Support Lookbook Campaign Image */}
-        <motion.img
-          src={imageUrl}
-          alt="NOSTLABEL Studio Mission Campaign Lookbook"
-          className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 brightness-[55%] transition-transform duration-700 ease-out group-hover:scale-105"
-          whileHover={{ scale: 1.04 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-        />
-        
-        {/* Accent Corner details */}
-        <div className="absolute top-4 left-4 text-[8px] font-mono text-white/20 uppercase tracking-widest">
-          LOOKBOOK SS26
-        </div>
-        <div className="absolute bottom-4 right-4 text-[8px] font-mono text-white/20 uppercase tracking-widest">
-          [ 45.1097° N ]
-        </div>
-      </motion.div>
-    );
-  };
-
   return (
     <section
       ref={containerRef}
@@ -73,14 +33,14 @@ export const BrandStory: React.FC = () => {
       {/* Background Subtle Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-bg-dark-1 via-transparent to-bg-dark-1 z-0 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10">
         
-        {/* Column 1: Editorial storytelling text copy */}
+        {/* Editorial storytelling text copy */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "show" : "hidden"}
-          className="lg:col-span-6 flex flex-col text-left space-y-6 md:space-y-8"
+          className="flex flex-col text-left space-y-6 md:space-y-8"
         >
           {/* 1. Small label appears */}
           <motion.div variants={itemVariants} className="flex items-center space-x-3 opacity-60">
@@ -102,31 +62,16 @@ export const BrandStory: React.FC = () => {
           {/* 3. Paragraph fades upward */}
           <motion.p
             variants={itemVariants}
-            className="text-sm md:text-base text-white/70 max-w-xl font-light leading-relaxed pt-2"
+            className="text-sm md:text-base text-white/70 max-w-2xl font-light leading-relaxed pt-2"
           >
             NOSTLABEL is a design studio focused on pattern engineering, premium fabric research, and structural streetwear silhouettes. We reject standard fast-fashion proportions. Every seam weight, rib radius, and drop shoulder angle is configured to float away from the body, constructing a structured uniform that remains unchanged through movement.
           </motion.p>
-
-          {/* Mobile Image (Visible on mobile/tablet, hidden on desktop) */}
-          <div className="block lg:hidden w-full">
-            {renderImageCard(true)}
-          </div>
 
           <motion.div variants={itemVariants} className="pt-4 flex items-center space-x-6 text-[10px] font-mono tracking-widest text-white/30 uppercase">
             <span>RELEASE 004 / STRETCH & SHAPE</span>
             <span>•</span>
             <span>MODEL: SS26</span>
           </motion.div>
-        </motion.div>
-
-        {/* Column 2: Framed supporting lookbook image (Hidden on mobile/tablet, visible on desktop) */}
-        <motion.div
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-          variants={containerVariants}
-          className="hidden lg:flex lg:col-span-6 justify-center w-full"
-        >
-          {renderImageCard(false)}
         </motion.div>
 
       </div>
