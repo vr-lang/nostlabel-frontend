@@ -372,7 +372,10 @@ export const App: React.FC = () => {
                     path="/collections/:slug"
                     element={
                       <PageTransition>
-                        <CollectionDetailPage onProductClick={handleProductDetails} />
+                        <CollectionDetailPage 
+                          onProductClick={handleProductDetails} 
+                          onAddToCart={handleAddToCart}
+                        />
                       </PageTransition>
                     }
                   />

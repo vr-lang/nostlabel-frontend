@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Manifesto from '../sections/Manifesto';
-import ScrollStory from '../sections/ScrollStory';
-import SplitCraft from '../sections/SplitCraft';
-import PinnedWords from '../sections/PinnedWords';
 import FeaturedCollection from '../sections/FeaturedCollection';
 import BestSellers from '../sections/BestSellers';
-import WhyNostlabel from '../sections/WhyNostlabel';
 import BrandStory from '../sections/BrandStory';
+import Testimonials from '../sections/Testimonials';
 import type { Product } from '../data/products';
 import HomepageOfferSection from '../components/HomepageOfferSection';
 import { API_BASE_URL } from '../config/api';
@@ -105,11 +101,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onProductClick 
         isFirstSection={!showOffer}
       />
       <FeaturedCollection onCategoryClick={() => handleNavigateToSection('bestsellers')} />
-      <Manifesto />
-      <ScrollStory />
-      <SplitCraft onLearnMoreClick={() => handleNavigateToSection('why-nostlabel')} />
-      <PinnedWords />
-      <WhyNostlabel />
+      <Testimonials />
       <BrandStory />
     </>
   );

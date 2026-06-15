@@ -11,7 +11,10 @@ import {
   ChevronDown, 
   ChevronUp, 
   Loader2, 
-  ArrowLeft 
+  ArrowLeft,
+  ShieldCheck,
+  RotateCcw,
+  Truck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/authService';
@@ -789,9 +792,25 @@ export const Checkout: React.FC<CheckoutProps> = ({ cartItems, clearCartLocal })
                     <span>CONFIRM & PLACE ORDER</span>
                   )}
                 </button>
-                <p className="text-[8px] font-mono text-text-dark/30 tracking-wider uppercase text-center mt-3 leading-normal">
+                <p className="text-[8px] font-mono text-text-dark/65 tracking-wider uppercase text-center mt-3 leading-normal">
                   BY CONFIRMING THIS ORDER YOU AGREE TO NOSTLABEL TERMS OF USE AND LUXURY MEMBERSHIP AGREEMENT.
                 </p>
+
+                {/* Secure Trust Badges */}
+                <div className="flex justify-around items-center pt-5 border-t border-text-dark/5 mt-5 text-[8px] sm:text-[9px] font-mono text-text-dark/70 tracking-wider">
+                  <div className="flex items-center space-x-1.5">
+                    <ShieldCheck size={12} className="text-accent-gold" />
+                    <span>SSL SECURE CHECKOUT</span>
+                  </div>
+                  <div className="flex items-center space-x-1.5">
+                    <RotateCcw size={12} className="text-accent-gold" />
+                    <span>7-DAY EXCHANGE</span>
+                  </div>
+                  <div className="flex items-center space-x-1.5">
+                    <Truck size={12} className="text-accent-gold" />
+                    <span>FREE SHIPPING</span>
+                  </div>
+                </div>
               </div>
 
             </div>

@@ -11,6 +11,18 @@
   
   --font-display: "Anton", sans-serif;
   --font-body: "Inter", sans-serif;
+
+  --spacing-section-gap: clamp(4rem, 8vw, 8rem);
+  --spacing-lg: clamp(2.5rem, 5vw, 5rem);
+  --spacing-md: clamp(1.5rem, 3vw, 2.5rem);
+  --spacing-sm: clamp(1rem, 2vw, 1.5rem);
+
+  --font-size-h1: clamp(2rem, 5vw, 3.5rem);
+  --font-size-h2: clamp(1.5rem, 4vw, 2.5rem);
+  --font-size-h3: clamp(1.2rem, 2.5vw, 1.75rem);
+  --font-size-body: clamp(0.85rem, 1.2vw, 1.05rem);
+  --font-size-caption: clamp(0.7rem, 0.9vw, 0.8rem);
+  --font-size-button: clamp(0.75rem, 1vw, 0.85rem);
 }
 
 /* Base custom styles */
@@ -51,6 +63,17 @@
   ::selection {
     background-color: rgba(201, 164, 106, 0.3);
     color: var(--color-text-dark);
+  }
+
+  /* Keyboard accessibility focus states */
+  button:focus-visible, 
+  a:focus-visible, 
+  input:focus-visible, 
+  select:focus-visible, 
+  textarea:focus-visible {
+    outline: 2px solid var(--color-accent-gold) !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 4px rgba(201, 164, 106, 0.2) !important;
   }
 }
 
@@ -143,4 +166,110 @@ html.lenis, html.lenis body {
   will-change: transform, opacity;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
+}
+
+/* Button Classes */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-text-dark);
+  color: var(--color-text-light);
+  font-family: var(--font-body);
+  font-size: var(--font-size-button);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  padding: 1.125rem 2.25rem;
+  border: 1px solid var(--color-text-dark);
+  border-radius: 0.125rem;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  color: var(--color-text-dark);
+  border-color: var(--color-text-dark);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--color-text-dark);
+  font-family: var(--font-body);
+  font-size: var(--font-size-button);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  padding: 1rem 2rem;
+  border: 1px solid rgba(18, 18, 18, 0.15);
+  border-radius: 0.125rem;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-text-dark);
+  background-color: var(--color-text-dark);
+  color: var(--color-text-light);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent-gold);
+  color: #070707;
+  font-family: var(--font-body);
+  font-size: var(--font-size-button);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  padding: 1.125rem 2.25rem;
+  border: 1px solid var(--color-accent-gold);
+  border-radius: 0.125rem;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 10px 15px -3px rgba(197, 160, 89, 0.15);
+}
+
+.btn-accent:hover {
+  background-color: transparent;
+  color: var(--color-text-light);
+  border-color: var(--color-text-light);
+}
+
+.btn-accent:active {
+  transform: scale(0.98);
+}
+
+/* Animations */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }

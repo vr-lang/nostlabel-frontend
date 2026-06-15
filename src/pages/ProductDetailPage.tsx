@@ -96,6 +96,60 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Custom states for CRO features
+  const [recentlyViewedProds, setRecentlyViewedProds] = useState<Product[]>([]);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  // Save viewed product to localStorage
+  useEffect(() => {
+    if (product) {
+      try {
+        const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+        const updated = [product.slug, ...recentlyViewed.filter((s: string) => s !== product.slug)].slice(0, 8);
+        localStorage.setItem('recentlyViewed', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Failed to update recently viewed localstorage:', err);
+      }
+    }
+  }, [product]);
+
+  // Load recently viewed details from slugs
+  useEffect(() => {
+    const loadRecentlyViewed = async () => {
+      try {
+        const slugs = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+        const filteredSlugs = slugs.filter((s: string) => s !== slug);
+        if (filteredSlugs.length === 0) {
+          setRecentlyViewedProds([]);
+          return;
+        }
+        const allProducts = await productService.getAllProducts();
+        const matched = filteredSlugs
+          .map((s: string) => allProducts.find(p => p.slug === s))
+          .filter(Boolean) as Product[];
+        setRecentlyViewedProds(matched.slice(0, 4));
+      } catch (err) {
+        console.error('Failed to load recently viewed products:', err);
+      }
+    };
+    if (product) {
+      loadRecentlyViewed();
+    }
+  }, [slug, product]);
+
+  // Scroll listener for Mobile Sticky Buy Bar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth < 768) {
+        setShowStickyBar(window.scrollY > 800);
+      } else {
+        setShowStickyBar(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // User selections
   const [selectedSize, setSelectedSize] = useState<'S' | 'M' | 'L' | 'XL' | 'XXL' | ''>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
@@ -598,18 +652,23 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
               {product.name}
             </h1>
             
-            <div className="flex items-center space-x-3 font-mono text-lg text-text-dark/90 font-bold">
+            <div className="space-y-1 text-left font-mono">
               {product.discountPrice ? (
-                <>
-                  <span className="text-text-dark/90">
+                <div className="flex flex-col space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-text-dark/40 line-through text-sm font-semibold">
+                      MRP: ₹{product.price.toLocaleString()}
+                    </span>
+                    <span className="text-[10px] font-bold bg-green-500/10 text-green-600 px-2 py-0.5 rounded-xs">
+                      SAVE {Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
+                    </span>
+                  </div>
+                  <span className="text-2xl font-bold text-accent-gold">
                     ₹{product.discountPrice.toLocaleString()}
                   </span>
-                  <span className="text-text-dark/40 line-through text-sm font-semibold">
-                    ₹{product.price.toLocaleString()}
-                  </span>
-                </>
+                </div>
               ) : (
-                <span>
+                <span className="text-2xl font-bold text-accent-gold">
                   ₹{product.price.toLocaleString()}
                 </span>
               )}
@@ -762,7 +821,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             <h2 className="font-display text-2xl md:text-3.5xl uppercase text-text-dark leading-none tracking-wide">
               ENGINEERED DETAIL
             </h2>
-            <p className="text-xs text-text-dark/50 font-mono font-light leading-relaxed max-w-sm">
+            <p className="text-xs text-text-dark/70 font-mono font-light leading-relaxed max-w-sm">
               Each garment silhouette undergoes strict architectural pattern grading, wash processing, and custom fabric construction cycles.
             </p>
           </div>
@@ -770,7 +829,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
           <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 border border-text-dark/10 p-6 sm:p-8 bg-bg-cream-2 rounded-sm shadow-inner">
             {productSpecs.map((spec) => (
               <div key={spec.name} className="flex flex-col sm:flex-row sm:justify-between sm:items-start py-3.5 sm:py-4 border-b border-text-dark/5 text-xs font-mono gap-1.5 sm:gap-4">
-                <span className="text-text-dark/40 uppercase tracking-wider shrink-0">{spec.name}</span>
+                <span className="text-text-dark/65 uppercase tracking-wider shrink-0">{spec.name}</span>
                 <span className="text-text-dark font-bold uppercase tracking-wide text-left sm:text-right break-words">{spec.value}</span>
               </div>
             ))}
@@ -1052,6 +1111,108 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             ))}
           </div>
         </motion.section>
+      )}
+
+      {/* RECENTLY VIEWED PRODUCTS SECTION */}
+      {recentlyViewedProds.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.5, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-7xl mx-auto mt-24 pt-16 border-t border-text-dark/10 text-left font-mono"
+        >
+          <div className="flex items-end justify-between mb-10">
+            <div className="space-y-2">
+              <span className="text-[10px] tracking-[0.3em] font-mono text-text-dark/40 uppercase">
+                YOUR SEARCH JOURNEY
+              </span>
+              <h2 className="font-display text-2xl md:text-3.5xl uppercase text-text-dark tracking-wide">
+                RECENTLY VIEWED
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {recentlyViewedProds.map((p) => (
+              <div
+                key={p.id}
+                onClick={() => navigate(`/product/${p.slug}`)}
+                className="group cursor-pointer flex flex-col space-y-3 text-left hover-trigger"
+              >
+                <div className="aspect-[3/4] w-full bg-bg-cream-2 border border-black/5 overflow-hidden relative rounded-sm">
+                  <FadeInImage
+                    src={getOptimizedImageUrl(p.images[0], 600)}
+                    alt={p.name}
+                    imgClassName="transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                
+                <div className="space-y-1 font-mono text-[10px] md:text-xs">
+                  <h3 className="text-text-dark font-bold uppercase group-hover:text-accent-gold transition-colors duration-300 truncate">
+                    {p.name}
+                  </h3>
+                  <div className="flex items-center space-x-1.5 text-text-dark/50 font-semibold font-mono text-[10px] md:text-xs">
+                    {p.discountPrice ? (
+                      <>
+                        <span className="text-text-dark/85">
+                          ₹{p.discountPrice.toLocaleString()}
+                        </span>
+                        <span className="line-through text-text-dark/30 text-[9px] md:text-[10px]">
+                          ₹{p.price.toLocaleString()}
+                        </span>
+                      </>
+                    ) : (
+                      <span>
+                        ₹{p.price.toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+      )}
+
+      {/* MOBILE STICKY BUY BAR */}
+      {showStickyBar && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-bg-cream-1/95 backdrop-blur-md border-t border-text-dark/10 p-4 shadow-2xl flex items-center justify-between md:hidden animate-slide-up text-left select-none">
+          <div className="flex items-center space-x-3 text-left">
+            <img
+              src={getOptimizedImageUrl(product.images[0], 150)}
+              alt={product.name}
+              className="w-10 h-12 object-cover bg-bg-cream-2 border border-black/5 rounded-xs shrink-0"
+            />
+            <div className="min-w-0">
+              <h4 className="text-[10px] font-bold text-text-dark uppercase tracking-wider truncate max-w-[120px]">
+                {product.name}
+              </h4>
+              <span className="text-[10px] font-mono font-semibold text-accent-gold block mt-0.5">
+                ₹{(product.discountPrice || product.price).toLocaleString()}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <select
+              value={selectedSize}
+              onChange={(e) => setSelectedSize(e.target.value as any)}
+              className="bg-bg-cream-2 border border-text-dark/15 text-[10px] uppercase font-mono font-bold px-2 py-2 rounded-sm focus:outline-none cursor-pointer"
+            >
+              <option value="" disabled>SIZE</option>
+              {availableSizes.map((size) => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+            <button
+              onClick={handleAdd}
+              disabled={stockStatus === 'OUT_OF_STOCK'}
+              className="bg-text-dark text-white text-[9px] uppercase font-bold tracking-widest px-4 py-2 border border-text-dark rounded-sm disabled:opacity-40 cursor-pointer transition-colors active:bg-accent-gold active:text-text-dark active:border-accent-gold animate-bounce"
+            >
+              {stockStatus === 'OUT_OF_STOCK' ? 'SOLD OUT' : 'ADD'}
+            </button>
+          </div>
+        </div>
       )}
 
     </div>

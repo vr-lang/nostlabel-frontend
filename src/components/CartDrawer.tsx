@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight, Sparkles } from 'lucide-react';
 import type { Product } from '../data/products';
 import { getActiveOffers, calculateOfferDiscount } from '../utils/offerHelper';
 import type { Offer } from '../utils/offerHelper';
@@ -29,6 +30,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onRemoveItem,
   onCheckout,
 }) => {
+  const navigate = useNavigate();
   const [activeOffers, setActiveOffers] = useState<Offer[]>([]);
 
   useEffect(() => {
@@ -89,6 +91,44 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
         {/* Scrollable list */}
         <div className="flex-grow overflow-y-auto p-6 space-y-6">
+          {/* Campaign Deal booster banner */}
+          {cartItems.length > 0 && (() => {
+            const totalTeeCount = cartItems.reduce((acc, item) => {
+              const isTee = item.product.category?.toLowerCase() === 't-shirts' || 
+                            item.product.category?.toLowerCase() === 'oversized tees' ||
+                            item.product.name.toLowerCase().includes('tee') ||
+                            item.product.name.toLowerCase().includes('t-shirt');
+              return isTee ? acc + item.quantity : acc;
+            }, 0);
+            
+            if (totalTeeCount % 2 === 1) {
+              return (
+                <div className="bg-accent-gold/10 border border-accent-gold/25 p-4 rounded-sm text-left mb-6 space-y-2 relative overflow-hidden">
+                  <div className="absolute right-2 top-2 text-accent-gold/20 pointer-events-none">
+                    <Sparkles size={24} />
+                  </div>
+                  <p className="text-[9px] font-mono font-bold text-accent-gold uppercase tracking-widest flex items-center space-x-1.5">
+                    <span>EXCLUSIVE DEAL LOCKED</span>
+                  </p>
+                  <p className="text-xs text-text-dark font-light leading-relaxed">
+                    Add <span className="font-bold text-accent-gold">1 more Oversized Tee</span> to activate the special campaign deal: <span className="font-bold">ANY 2 FOR ₹1400</span>.
+                  </p>
+                  <button
+                    onClick={() => {
+                      onClose();
+                      navigate('/collections/oversized-tees');
+                    }}
+                    className="text-[9px] font-mono font-bold text-text-dark hover:text-accent-gold tracking-widest uppercase flex items-center space-x-1 mt-1 transition-colors cursor-pointer"
+                  >
+                    <span>SHOP TEES COLLECTION</span>
+                    <span>→</span>
+                  </button>
+                </div>
+              );
+            }
+            return null;
+          })()}
+
           {cartItems.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center space-y-4 text-center py-20">
               <ShoppingBag size={48} className="text-text-dark/20 stroke-[1px]" />

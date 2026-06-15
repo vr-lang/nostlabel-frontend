@@ -9,7 +9,12 @@ import { getOptimizedImageUrl } from '../utils/image';
 
 const NOSTLABEL_PLACEHOLDER = "/logo.png";
 
-export const CollectionDetailPage: React.FC<{ onProductClick: (product: Product) => void }> = ({ onProductClick }) => {
+interface CollectionDetailPageProps {
+  onProductClick: (product: Product) => void;
+  onAddToCart: (product: Product, size: 'S' | 'M' | 'L' | 'XL' | 'XXL', color: string) => void;
+}
+
+export const CollectionDetailPage: React.FC<CollectionDetailPageProps> = ({ onProductClick, onAddToCart }) => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [category, setCategory] = useState<Category | null>(null);
@@ -203,64 +208,127 @@ export const CollectionDetailPage: React.FC<{ onProductClick: (product: Product)
           animate="show"
           className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-12 md:gap-x-6 md:gap-y-16"
         >
-          {products.map((product) => (
-            <motion.div
-              key={product.id}
-              variants={itemVariants}
-              onClick={() => onProductClick(product)}
-              className="group flex flex-col space-y-4 text-left relative cursor-pointer"
-            >
-              {/* Image Container */}
-              <div className="aspect-[3/4] w-full bg-[#F2ECE4] overflow-hidden border border-text-dark/5 relative shadow-sm transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-lg group-hover:border-accent-gold/20">
-                <img
-                  src={getOptimizedImageUrl(product.images[0] || NOSTLABEL_PLACEHOLDER, 600)}
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter grayscale-[20%] group-hover:grayscale-0"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-bg-dark-1/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
+          {products.map((product) => {
+            const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ['S', 'M', 'L', 'XL', 'XXL'];
 
-              {/* Details */}
-              <div className="space-y-1.5 transition-transform duration-500 group-hover:-translate-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-mono tracking-widest text-text-dark/40 uppercase">
-                    {product.category}
-                  </span>
-                  <div className="flex items-center space-x-1.5 font-mono text-[10px]">
-                    {product.discountPrice ? (
-                      <>
-                        <span className="text-accent-gold font-semibold">
-                          ₹{product.discountPrice.toLocaleString()}
-                        </span>
-                        <span className="text-text-dark/40 line-through text-[9px]">
-                          ₹{product.price.toLocaleString()}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-accent-gold font-semibold">
-                        ₹{product.price.toLocaleString()}
-                      </span>
-                    )}
+            const handleQuickAdd = (e: React.MouseEvent, size: 'S' | 'M' | 'L' | 'XL' | 'XXL') => {
+              e.stopPropagation();
+              if (onAddToCart) {
+                onAddToCart(product, size, product.colors[0] || 'Default');
+              }
+            };
+
+            return (
+              <motion.div
+                key={product.id}
+                variants={itemVariants}
+                onClick={() => onProductClick(product)}
+                className="group flex flex-col space-y-4 text-left relative cursor-pointer"
+              >
+                {/* Image Container */}
+                <div className="aspect-[3/4] w-full bg-[#F2ECE4] overflow-hidden border border-text-dark/5 relative shadow-sm transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-lg group-hover:border-accent-gold/20">
+                  {/* Urgency Badge */}
+                  {product.bestseller && (
+                    <span className="absolute top-3 left-3 bg-accent-gold text-bg-dark-1 text-[8px] font-mono font-bold tracking-widest uppercase px-2 py-0.5 z-10 shadow-md rounded-xs">
+                      BEST SELLER
+                    </span>
+                  )}
+                  {!product.bestseller && product.featured && (
+                    <span className="absolute top-3 left-3 bg-text-dark text-white text-[8px] font-mono font-bold tracking-widest uppercase px-2 py-0.5 z-10 shadow-md rounded-xs">
+                      LIMITED RUN
+                    </span>
+                  )}
+
+                  <img
+                    src={getOptimizedImageUrl(product.images[0] || NOSTLABEL_PLACEHOLDER, 600)}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter grayscale-[20%] group-hover:grayscale-0"
+                    loading="lazy"
+                  />
+                  
+                  {/* Subtle Luxury Gradient Overlay */}
+                  <div className="absolute inset-0 bg-bg-dark-1/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* Desktop Hover Quick Add Panel */}
+                  <div className="hidden md:flex absolute bottom-0 left-0 right-0 bg-bg-cream-1/95 border-t border-text-dark/10 p-3 translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex-col items-center space-y-1.5 z-20">
+                    <span className="text-[8px] font-mono font-bold text-text-dark/45 tracking-widest uppercase">QUICK ADD</span>
+                    <div className="flex gap-1.5">
+                      {sizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={(e) => handleQuickAdd(e, size as any)}
+                          className="text-[9px] font-mono font-bold w-8 h-8 flex items-center justify-center border border-text-dark/15 rounded-sm hover:border-text-dark hover:bg-text-dark hover:text-white transition-colors active:scale-95 cursor-pointer"
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <h3 className="font-display text-lg md:text-xl uppercase text-text-dark leading-tight group-hover:text-accent-gold transition-colors duration-300">
-                  {product.name}
-                </h3>
-                
-                {/* Hover text reveal */}
-                <div className="relative overflow-hidden h-4">
-                  <p className="text-[9px] font-mono text-text-dark/50 transition-all duration-300 transform group-hover:-translate-y-full">
-                    {product.material} • {product.gsm}
-                  </p>
-                  <p className="absolute top-0 left-0 text-[9px] font-mono text-accent-gold font-bold tracking-widest uppercase transition-all duration-300 transform translate-y-full group-hover:translate-y-0 flex items-center space-x-1">
-                    <span>EXPLORE SILHOUETTE</span>
-                    <span>→</span>
-                  </p>
+
+                {/* Details */}
+                <div className="space-y-1.5 transition-transform duration-500 group-hover:-translate-y-1">
+                  <div className="flex items-start justify-between">
+                    <span className="text-[9px] font-mono tracking-widest text-text-dark/50 uppercase pt-1">
+                      {product.category}
+                    </span>
+                    
+                    {/* Price Stack */}
+                    <div className="flex flex-col items-end text-right">
+                      {product.discountPrice ? (
+                        <>
+                          <div className="flex items-center space-x-1.5">
+                            <span className="text-text-dark/40 line-through text-[9px] font-mono">
+                              MRP: ₹{product.price.toLocaleString()}
+                            </span>
+                            <span className="text-[8px] font-mono bg-green-500/10 text-green-600 px-1 py-0.5 rounded-xs font-bold">
+                              SAVE {Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
+                            </span>
+                          </div>
+                          <span className="text-accent-gold font-bold text-xs font-mono">
+                            ₹{product.discountPrice.toLocaleString()}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-accent-gold font-bold text-xs font-mono">
+                          ₹{product.price.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <h3 className="font-display text-lg md:text-xl uppercase text-text-dark leading-tight group-hover:text-accent-gold transition-colors duration-300">
+                    {product.name}
+                  </h3>
+                  
+                  {/* Hover text reveal */}
+                  <div className="relative overflow-hidden h-4">
+                    <p className="text-[9px] font-mono text-text-dark/50 transition-all duration-300 transform group-hover:-translate-y-full">
+                      {product.material} • {product.gsm}
+                    </p>
+                    <p className="absolute top-0 left-0 text-[9px] font-mono text-accent-gold font-bold tracking-widest uppercase transition-all duration-300 transform translate-y-full group-hover:translate-y-0 flex items-center space-x-1">
+                      <span>EXPLORE SILHOUETTE</span>
+                      <span>→</span>
+                    </p>
+                  </div>
+
+                  {/* Mobile Sizing Row (Only visible on mobile) */}
+                  <div className="md:hidden pt-2 flex items-center space-x-1.5 overflow-x-auto scrollbar-none">
+                    <span className="text-[8px] font-mono text-text-dark/45 uppercase font-bold shrink-0">ADD:</span>
+                    {sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={(e) => handleQuickAdd(e, size as any)}
+                        className="text-[9px] font-mono font-bold w-7 h-7 flex items-center justify-center border border-text-dark/15 rounded-sm bg-bg-cream-1 active:bg-text-dark active:text-white transition-colors cursor-pointer"
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </div>
