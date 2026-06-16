@@ -75,9 +75,9 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1.0, ease: 'easeOut' }}
-      className="relative w-full min-h-[100dvh] bg-[#070707] text-white flex flex-col justify-between items-center lg:justify-center overflow-hidden z-10 select-none px-6 md:px-12 lg:px-20 py-8 lg:py-16"
+      className="relative w-full min-h-[100dvh] bg-[#070707] text-white flex flex-col justify-between items-center lg:justify-start overflow-hidden z-10 select-none px-6 md:px-12 lg:px-20 py-8 lg:py-16"
       style={{
-        paddingTop: isFirstSection ? 'calc(var(--header-height, 80px) + 1.5rem)' : '3rem',
+        paddingTop: isFirstSection ? 'calc(var(--header-height, 80px) + 3rem)' : '4rem',
       }}
       id="homepage-offer-section"
     >
@@ -203,7 +203,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
         {/* Left Column: Premium Editorial Typography & CTA */}
         <div className="flex flex-col items-start text-left py-6">
           {/* Branding */}
-          <span className="font-display text-[28px] xl:text-[34px] tracking-[0.5em] font-light text-white uppercase block leading-none mb-10">
+          <span className="font-display text-[28px] xl:text-[34px] tracking-[0.25em] font-light text-white uppercase block leading-none mb-10">
             NØSTLABEL
           </span>
 
@@ -216,7 +216,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
           </div>
 
           {/* ANY 2 T-SHIRTS */}
-          <h2 className="font-display text-[44px] xl:text-[56px] leading-[1.1] text-white uppercase tracking-[0.05em] font-black mb-4">
+          <h2 className="font-display text-[56px] xl:text-[72px] leading-[1.05] text-white uppercase tracking-[0.05em] font-black mb-4">
             ANY 2 T-SHIRTS
           </h2>
 
@@ -225,7 +225,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
             <span className="font-serif italic text-sm md:text-base text-white/40 uppercase tracking-[0.35em]">
               FOR
             </span>
-            <span className="font-display text-[48px] xl:text-[64px] leading-none text-accent-gold font-black tracking-tight drop-shadow-[0_15px_30px_rgba(197,160,89,0.15)]">
+            <span className="font-display text-[96px] xl:text-[120px] leading-none text-accent-gold font-black tracking-tight drop-shadow-[0_20px_45px_rgba(197,160,89,0.25)]">
               ₹{offer.price || '1400'}
             </span>
           </div>
@@ -260,7 +260,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
         {/* Right Column: Large Product Showcase */}
         {products.length > 0 && (
           <div className="flex justify-center items-center w-full h-[60vh] xl:h-[65vh]">
-            <div className="relative w-full max-w-lg h-full flex items-center justify-center px-4">
+            <div className="relative w-full max-w-2xl xl:max-w-3xl h-full flex items-center justify-center px-4">
               {/* Left Product Image (Offset & Shadow) */}
               {products[0] && (
                 <motion.div
@@ -268,7 +268,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
                   animate={{ x: 0, opacity: 1, rotate: -3 }}
                   transition={{ delay: 0.3, duration: 0.8 }}
                   onClick={() => handleProductClick(products[0].slug)}
-                  className="w-[52%] aspect-[3/4] bg-[#0E0E0E] border border-white/5 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-10 -mr-12 -translate-y-8"
+                  className="w-[60%] xl:w-[65%] aspect-[3/4] bg-[#0E0E0E] border border-white/5 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-10 -mr-12 -translate-y-8"
                 >
                   <img
                     src={getProductImageUrl(products[0])}
@@ -289,7 +289,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
                   animate={{ x: 0, opacity: 1, rotate: 3 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                   onClick={() => handleProductClick(products[1].slug)}
-                  className="w-[52%] aspect-[3/4] bg-[#0E0E0E] border border-white/10 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-20 -ml-12 translate-y-8"
+                  className="w-[60%] xl:w-[65%] aspect-[3/4] bg-[#0E0E0E] border border-white/10 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-20 -ml-12 translate-y-8"
                 >
                   <img
                     src={getProductImageUrl(products[1])}
