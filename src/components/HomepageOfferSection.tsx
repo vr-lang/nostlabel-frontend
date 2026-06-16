@@ -245,11 +245,11 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
           </button>
 
           {/* Feature Highlights Pills directly below CTA */}
-          <div className="flex flex-wrap gap-3 w-full max-w-md mt-6">
+          <div className="grid grid-cols-3 gap-3 w-full max-w-md mt-6">
             {benefits.map((benefit, i) => (
               <span
                 key={i}
-                className="text-[8px] xl:text-[9px] font-mono tracking-widest text-white/50 bg-white/[0.02] border border-white/5 px-3 py-1.5 rounded-full uppercase select-none hover:text-accent-gold hover:border-accent-gold/25 transition-all duration-200"
+                className="text-[8px] xl:text-[9px] font-mono tracking-widest text-white/50 bg-white/[0.02] border border-white/5 py-2 px-1 rounded-full uppercase select-none hover:text-accent-gold hover:border-accent-gold/25 transition-all duration-200 text-center block w-full truncate"
               >
                 {benefit}
               </span>
