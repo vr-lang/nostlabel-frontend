@@ -122,7 +122,7 @@ export const App: React.FC = () => {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [location.pathname, showNavbarAndFooter]);
+  }, [location.pathname, showNavbarAndFooter, showInitialLoader]);
 
   // 1. Fetch Cart from Backend on Startup
   useEffect(() => {

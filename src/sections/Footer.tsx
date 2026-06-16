@@ -29,13 +29,13 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-x-8 gap-y-12 md:gap-12 text-left mb-20">
         
         {/* Col 1: Brand Info */}
-        <div className="space-y-4 col-span-1 sm:col-span-2 md:col-span-2">
+        <div className="space-y-4 col-span-1 sm:col-span-2 md:col-span-2 w-full max-w-md">
           <img
             src="/logo.png"
             alt="Nost Label"
             className="h-[24px] w-auto object-contain invert brightness-200 block mb-2"
           />
-          <p className="text-xs text-white/40 leading-relaxed font-light max-w-sm">
+          <p className="text-xs text-white/40 leading-relaxed font-light max-w-sm w-full block">
             Architectural garments designed to float away from body friction. Precision engineered, premium fabrics, and timeless construction.
           </p>
         </div>
