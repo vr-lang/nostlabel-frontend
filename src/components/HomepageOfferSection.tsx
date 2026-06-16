@@ -199,9 +199,9 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
       </div>
 
       {/* --- DESKTOP REDESIGNED LAYOUT (hidden lg:grid) --- */}
-      <div className="hidden lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center lg:w-full lg:max-w-7xl lg:mx-auto lg:flex-grow z-10">
+      <div className="hidden lg:grid lg:grid-cols-12 lg:gap-8 lg:items-center lg:w-full lg:max-w-7xl lg:mx-auto lg:flex-grow z-10 px-8">
         {/* Left Column: Premium Editorial Typography & CTA */}
-        <div className="flex flex-col items-start text-left py-6">
+        <div className="lg:col-span-5 flex flex-col items-start text-left py-6 w-full">
           {/* Branding */}
           <span className="font-display text-[28px] xl:text-[34px] tracking-[0.25em] font-light text-white uppercase block leading-none mb-10">
             NØSTLABEL
@@ -238,14 +238,14 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
           {/* SHOP THE OFFER CTA */}
           <button
             onClick={handleCtaClick}
-            className="w-[260px] bg-accent-gold text-black text-[11px] xl:text-[12px] uppercase tracking-[0.25em] font-bold py-4 border border-accent-gold hover:bg-transparent hover:text-white transition-all duration-300 shadow-xl shadow-accent-gold/10 font-display flex items-center justify-center space-x-2.5 active:scale-[0.98] cursor-pointer mb-8"
+            className="w-[280px] bg-accent-gold text-black text-[11px] xl:text-[12px] uppercase tracking-[0.25em] font-bold py-4 border border-accent-gold hover:bg-transparent hover:text-white transition-all duration-300 shadow-xl shadow-accent-gold/10 font-display flex items-center justify-center space-x-2.5 active:scale-[0.98] cursor-pointer mb-8"
           >
             <span>{offer.ctaText || 'SHOP THE OFFER'}</span>
             <ArrowRight size={14} className="stroke-[2.5px]" />
           </button>
 
           {/* Feature Highlights Pills directly below CTA */}
-          <div className="flex flex-wrap gap-2 max-w-sm mt-4">
+          <div className="flex flex-wrap gap-3 w-full max-w-md mt-6">
             {benefits.map((benefit, i) => (
               <span
                 key={i}
@@ -259,7 +259,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
 
         {/* Right Column: Large Product Showcase */}
         {products.length > 0 && (
-          <div className="flex justify-center items-center w-full h-[60vh] xl:h-[65vh]">
+          <div className="lg:col-span-7 flex justify-center items-center w-full h-[60vh] xl:h-[65vh]">
             <div className="relative w-full max-w-2xl xl:max-w-3xl h-full flex items-center justify-center px-4">
               {/* Left Product Image (Offset & Shadow) */}
               {products[0] && (
@@ -268,7 +268,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
                   animate={{ x: 0, opacity: 1, rotate: -3 }}
                   transition={{ delay: 0.3, duration: 0.8 }}
                   onClick={() => handleProductClick(products[0].slug)}
-                  className="w-[60%] xl:w-[65%] aspect-[3/4] bg-[#0E0E0E] border border-white/5 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-10 -mr-12 -translate-y-8"
+                  className="absolute left-[4%] top-[8%] w-[54%] xl:w-[56%] aspect-[3/4] bg-[#0E0E0E] border border-white/5 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-10"
                 >
                   <img
                     src={getProductImageUrl(products[0])}
@@ -289,7 +289,7 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
                   animate={{ x: 0, opacity: 1, rotate: 3 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                   onClick={() => handleProductClick(products[1].slug)}
-                  className="w-[60%] xl:w-[65%] aspect-[3/4] bg-[#0E0E0E] border border-white/10 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-20 -ml-12 translate-y-8"
+                  className="absolute right-[4%] bottom-[8%] w-[54%] xl:w-[56%] aspect-[3/4] bg-[#0E0E0E] border border-white/10 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-20"
                 >
                   <img
                     src={getProductImageUrl(products[1])}
