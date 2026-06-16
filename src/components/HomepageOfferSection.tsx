@@ -199,59 +199,57 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
       </div>
 
       {/* --- DESKTOP REDESIGNED LAYOUT (hidden lg:grid) --- */}
-      <div className="hidden lg:grid lg:grid-cols-12 lg:gap-16 lg:items-center lg:w-full lg:max-w-7xl lg:mx-auto lg:flex-grow z-10">
+      <div className="hidden lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center lg:w-full lg:max-w-7xl lg:mx-auto lg:flex-grow z-10">
         {/* Left Column: Premium Editorial Typography & CTA */}
-        <div className="lg:col-span-5 flex flex-col items-start text-left">
+        <div className="flex flex-col items-start text-left py-6">
           {/* Branding */}
-          <span className="font-display text-[28px] xl:text-[34px] tracking-[0.5em] font-light text-white uppercase block leading-none mb-12">
+          <span className="font-display text-[28px] xl:text-[34px] tracking-[0.5em] font-light text-white uppercase block leading-none mb-10">
             NØSTLABEL
           </span>
 
           {/* Sparkles Campaign Capsule */}
-          <div className="flex items-center space-x-2.5 py-1.5 border-b border-accent-gold/20 px-4 mb-8">
-            <Sparkles size={11} className="text-accent-gold animate-pulse" />
-            <span className="text-[10px] xl:text-xs tracking-[0.4em] font-mono font-bold text-accent-gold uppercase block">
+          <div className="flex items-center space-x-2 py-1.5 border-b border-accent-gold/10 px-4 mb-6">
+            <Sparkles size={10} className="text-accent-gold animate-pulse" />
+            <span className="text-[10px] md:text-xs tracking-[0.35em] font-mono font-bold text-accent-gold uppercase block">
               {offer.subtitle || 'LIMITED TIME OFFER'}
             </span>
           </div>
 
           {/* ANY 2 T-SHIRTS */}
-          <h2 className="font-display text-[48px] xl:text-[64px] leading-tight text-white uppercase tracking-[0.06em] font-black mb-3">
+          <h2 className="font-display text-[44px] xl:text-[56px] leading-[1.1] text-white uppercase tracking-[0.05em] font-black mb-4">
             ANY 2 T-SHIRTS
           </h2>
 
-          {/* FOR */}
-          <span className="font-serif italic text-base xl:text-lg text-white/30 uppercase tracking-[0.4em] block my-6">
-            FOR
-          </span>
-
-          {/* ₹1400 */}
-          <span className="font-display text-[96px] xl:text-[118px] leading-[0.9] text-accent-gold font-black tracking-normal drop-shadow-[0_20px_45px_rgba(197,160,89,0.25)] block mb-6">
-            ₹{offer.price || '1400'}
-          </span>
+          {/* FOR ₹1400 */}
+          <div className="flex items-baseline space-x-4 mb-6">
+            <span className="font-serif italic text-sm md:text-base text-white/40 uppercase tracking-[0.35em]">
+              FOR
+            </span>
+            <span className="font-display text-[48px] xl:text-[64px] leading-none text-accent-gold font-black tracking-tight drop-shadow-[0_15px_30px_rgba(197,160,89,0.15)]">
+              ₹{offer.price || '1400'}
+            </span>
+          </div>
 
           {/* PREMIUM OVERSIZED TEES */}
-          <p className="text-[11px] xl:text-xs font-mono tracking-[0.45em] text-white/40 uppercase mb-12">
+          <p className="text-[11px] xl:text-xs font-mono tracking-[0.4em] text-white/50 uppercase max-w-md mb-8">
             {offer.description || 'PREMIUM OVERSIZED TEES'}
           </p>
 
-          {/* Shop Offer CTA */}
-          <div className="w-full max-w-sm">
-            <button
-              onClick={handleCtaClick}
-              className="w-full bg-accent-gold text-black text-[11px] xl:text-[12px] uppercase tracking-[0.3em] font-bold py-5 border border-accent-gold hover:bg-transparent hover:text-white transition-all duration-300 shadow-2xl shadow-accent-gold/15 font-display flex items-center justify-center space-x-3 active:scale-[0.98] cursor-pointer"
-            >
-              <span>{offer.ctaText || 'SHOP THE OFFER'}</span>
-              <ArrowRight size={16} className="stroke-[2.5px]" />
-            </button>
-          </div>
+          {/* SHOP THE OFFER CTA */}
+          <button
+            onClick={handleCtaClick}
+            className="w-[260px] bg-accent-gold text-black text-[11px] xl:text-[12px] uppercase tracking-[0.25em] font-bold py-4 border border-accent-gold hover:bg-transparent hover:text-white transition-all duration-300 shadow-xl shadow-accent-gold/10 font-display flex items-center justify-center space-x-2.5 active:scale-[0.98] cursor-pointer mb-8"
+          >
+            <span>{offer.ctaText || 'SHOP THE OFFER'}</span>
+            <ArrowRight size={14} className="stroke-[2.5px]" />
+          </button>
 
-          {/* Benefits pill grid */}
-          <div className="flex flex-wrap gap-2.5 mt-10 max-w-md">
+          {/* Feature Highlights Pills directly below CTA */}
+          <div className="flex flex-wrap gap-2 max-w-sm mt-4">
             {benefits.map((benefit, i) => (
               <span
                 key={i}
-                className="text-[9px] xl:text-[10px] font-mono tracking-widest text-white/40 bg-white/[0.02] border border-white/5 px-4 py-2 rounded-full uppercase select-none hover:text-accent-gold hover:border-accent-gold/25 transition-all duration-200"
+                className="text-[8px] xl:text-[9px] font-mono tracking-widest text-white/50 bg-white/[0.02] border border-white/5 px-3 py-1.5 rounded-full uppercase select-none hover:text-accent-gold hover:border-accent-gold/25 transition-all duration-200"
               >
                 {benefit}
               </span>
@@ -259,23 +257,23 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
           </div>
         </div>
 
-        {/* Right Column: Premium Offset Product Showcase Collage */}
+        {/* Right Column: Large Product Showcase */}
         {products.length > 0 && (
-          <div className="lg:col-span-7 relative w-full h-[65vh] xl:h-[70vh] flex items-center justify-center">
-            <div className="relative w-[85%] h-full max-w-2xl flex items-center justify-center">
+          <div className="flex justify-center items-center w-full h-[60vh] xl:h-[65vh]">
+            <div className="relative w-full max-w-lg h-full flex items-center justify-center px-4">
               {/* Left Product Image (Offset & Shadow) */}
               {products[0] && (
                 <motion.div
-                  initial={{ x: -100, opacity: 0, rotate: -2 }}
-                  animate={{ x: -40, y: -20, opacity: 1, rotate: -3 }}
-                  transition={{ delay: 0.3, duration: 1.0, ease: 'easeOut' }}
+                  initial={{ x: -40, opacity: 0, rotate: -2 }}
+                  animate={{ x: 0, opacity: 1, rotate: -3 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
                   onClick={() => handleProductClick(products[0].slug)}
-                  className="absolute left-[8%] h-[80%] aspect-[3/4] bg-[#0E0E0E] border border-white/5 rounded-xs overflow-hidden shadow-2xl shadow-black/95 hover:border-accent-gold/40 hover:scale-[1.03] transition-all duration-500 cursor-pointer z-10"
+                  className="w-[52%] aspect-[3/4] bg-[#0E0E0E] border border-white/5 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-10 -mr-12 -translate-y-8"
                 >
                   <img
                     src={getProductImageUrl(products[0])}
                     alt={products[0].name}
-                    className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="eager"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/logo.png';
@@ -284,19 +282,19 @@ export const HomepageOfferSection: React.FC<HomepageOfferSectionProps> = ({
                 </motion.div>
               )}
 
-              {/* Right Product Image (Overlapping & Foreground) */}
+              {/* Right Product Image (Overlapping & Highlighted) */}
               {products[1] && (
                 <motion.div
-                  initial={{ x: 100, opacity: 0, rotate: 2 }}
-                  animate={{ x: 40, y: 20, opacity: 1, rotate: 3 }}
-                  transition={{ delay: 0.4, duration: 1.0, ease: 'easeOut' }}
+                  initial={{ x: 40, opacity: 0, rotate: 2 }}
+                  animate={{ x: 0, opacity: 1, rotate: 3 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
                   onClick={() => handleProductClick(products[1].slug)}
-                  className="absolute right-[8%] h-[80%] aspect-[3/4] bg-[#0E0E0E] border border-white/10 rounded-xs overflow-hidden shadow-2xl shadow-black/95 hover:border-accent-gold/40 hover:scale-[1.03] transition-all duration-500 cursor-pointer z-20"
+                  className="w-[52%] aspect-[3/4] bg-[#0E0E0E] border border-white/10 rounded-xs overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.9)] hover:border-accent-gold/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer z-20 -ml-12 translate-y-8"
                 >
                   <img
                     src={getProductImageUrl(products[1])}
                     alt={products[1].name}
-                    className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="eager"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/logo.png';
